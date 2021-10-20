@@ -1,0 +1,72 @@
+/home/dawna/cz277/ami/transcription/exp/SCM1/dnn-fwd/base/bin/HCopy -A -D -T 1 -V -h %%%%%%%%%%%%%%%.* -C cfgs/ark.cfg -o data/arks/dev.scp -S MDM.scps/dev.meetings.vec.hcopy.scp 
+
+HTK Configuration Parameters[6]
+  Module/Tool     Parameter                  Value
+#                 SAVEASARK                   TRUE
+#                 SAVEASVQ                   FALSE
+#                 SAVEWITHCRC                FALSE
+#                 SAVECOMPRESSED             FALSE
+#                 NATURALWRITEORDER             FALSE
+#                 TARGETKIND                  USER
+
+
+HTK Version Information
+Module     Version    Who    Date      : CVS Info
+HCopy      3.5.0      CUED   12/10/15  : $Id: HCopy.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HShell     3.5.0      CUED   12/10/15  : $Id: HShell.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HMem       3.5.0      CUED   12/10/15  : $Id: HMem.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HLabel     3.5.0      CUED   12/10/15  : $Id: HLabel.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HMath      3.5.0      CUED   12/10/15  : $Id: HMath.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HSigP      3.5.0      CUED   12/10/15  : $Id: HSigP.c,v 1.1.1.1 2006/10/11 09:54:58 jal58 Exp $
+HWave      3.5.0      CUED   12/10/15  : $Id: HWave.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HAudio     3.5.0      CUED   12/10/15  : $Id: HAudio.c,v 1.1.1.1 2006/10/11 09:54:57 jal58 Exp $
+HVQ        3.5.0      CUED   12/10/15  : $Id: HVQ.c,v 1.1.1.1 2006/10/11 09:54:59 jal58 Exp $
+HModel     3.5.0      CUED   12/10/15  : $Id: HModel.c,v 1.3 2015/10/12 12:07:24 cz277 Exp $
+HParm      3.5.0      CUED   12/10/15  : $Id: HParm.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+
+Archiving 178080x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4001.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 188235x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4002.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 202340x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4003.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 239298x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4004.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 296062x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4010.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 241705x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-00IB4011.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 111383x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0ES2011a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 158125x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0ES2011b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 161604x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0ES2011c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 198231x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0ES2011d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 94394x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0IS1008a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 176851x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0IS1008b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 154639x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0IS1008c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 148085x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0IS1008d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 134530x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0TS3004a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 224604x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0TS3004b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 296998x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0TS3004c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+Archiving 275078x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark
+AMIMDM-0TS3004d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/dev.ark 
+
+HTK Configuration Parameters[6]
+  Module/Tool     Parameter                  Value
+                  SAVEASARK                   TRUE
+                  SAVEASVQ                   FALSE
+                  SAVEWITHCRC                FALSE
+                  SAVECOMPRESSED             FALSE
+                  NATURALWRITEORDER             FALSE
+                  TARGETKIND                  USER
+

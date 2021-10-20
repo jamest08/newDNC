@@ -1,0 +1,68 @@
+/home/dawna/cz277/ami/transcription/exp/SCM1/dnn-fwd/base/bin/HCopy -A -D -T 1 -V -h %%%%%%%%%%%%%%%.* -C cfgs/ark.cfg -o data/arks/eval.scp -S MDM.scps/eval.meetings.vec.hcopy.scp 
+
+HTK Configuration Parameters[6]
+  Module/Tool     Parameter                  Value
+#                 SAVEASARK                   TRUE
+#                 SAVEASVQ                   FALSE
+#                 SAVEWITHCRC                FALSE
+#                 SAVECOMPRESSED             FALSE
+#                 NATURALWRITEORDER             FALSE
+#                 TARGETKIND                  USER
+
+
+HTK Version Information
+Module     Version    Who    Date      : CVS Info
+HCopy      3.5.0      CUED   12/10/15  : $Id: HCopy.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HShell     3.5.0      CUED   12/10/15  : $Id: HShell.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HMem       3.5.0      CUED   12/10/15  : $Id: HMem.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HLabel     3.5.0      CUED   12/10/15  : $Id: HLabel.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HMath      3.5.0      CUED   12/10/15  : $Id: HMath.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HSigP      3.5.0      CUED   12/10/15  : $Id: HSigP.c,v 1.1.1.1 2006/10/11 09:54:58 jal58 Exp $
+HWave      3.5.0      CUED   12/10/15  : $Id: HWave.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+HAudio     3.5.0      CUED   12/10/15  : $Id: HAudio.c,v 1.1.1.1 2006/10/11 09:54:57 jal58 Exp $
+HVQ        3.5.0      CUED   12/10/15  : $Id: HVQ.c,v 1.1.1.1 2006/10/11 09:54:59 jal58 Exp $
+HModel     3.5.0      CUED   12/10/15  : $Id: HModel.c,v 1.3 2015/10/12 12:07:24 cz277 Exp $
+HParm      3.5.0      CUED   12/10/15  : $Id: HParm.c,v 1.2 2015/10/12 12:07:24 cz277 Exp $
+
+Archiving 214269x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0EN2002a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 178683x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0EN2002b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 297224x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0EN2002c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 220988x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0EN2002d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 104933x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0ES2004a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 234547x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0ES2004b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 233435x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0ES2004c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 222227x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0ES2004d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 83898x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0IS1009a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 205242x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0IS1009b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 182082x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0IS1009c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 194464x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0IS1009d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 150562x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0TS3003a.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 221028x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0TS3003b.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 256998x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0TS3003c.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+Archiving 261818x32 feature matrix into /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark
+AMIMDM-0TS3003d.vec -> /home/dawna/flk24/diarization/NeuralSpeakerClustering/extractDVector.Paper.Meeting/data/arks/eval.ark 
+
+HTK Configuration Parameters[6]
+  Module/Tool     Parameter                  Value
+                  SAVEASARK                   TRUE
+                  SAVEASVQ                   FALSE
+                  SAVEWITHCRC                FALSE
+                  SAVECOMPRESSED             FALSE
+                  NATURALWRITEORDER             FALSE
+                  TARGETKIND                  USER
+
