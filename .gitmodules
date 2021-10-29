@@ -1,0 +1,3 @@
+[submodule "SpectralCluster"]
+	path = SpectralCluster
+	url = https://github.com/FlorianKrey/SpectralCluster.git
