@@ -10,7 +10,8 @@ from tqdm import tqdm
 import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
-import pickle
+# import pickle
+from data_loading import build_segment_dicts
 
 def setup():
     """Get cmds and setup directories."""
@@ -34,10 +35,10 @@ def setup():
     #     utils.cache_command(sys.argv, outdir)
     return cmdargs
 
-def load_obj(name):
-    """Loads an object from /obj using pickle."""
-    with open('obj/' + name + '.pkl', 'rb') as f:
-        return pickle.load(f)
+# def load_obj(name):
+#     """Loads an object from /obj using pickle."""
+#     with open('obj/' + name + '.pkl', 'rb') as f:
+#         return pickle.load(f)
 
 def do_spectral_clustering(dvec_list, gauss_blur=1.0, p_percentile=0.95,
                            minclusters=2, maxclusters=4, truek=4, custom_dist=None):
@@ -73,7 +74,7 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
     #     json_file = json.load(_json_file)
     results_dict = {}
     # for midx, meeting in tqdm(list(json_file["utts"].items())):
-    for meeting_id in averaged_segmented_meetings_dict.keys():
+    for meeting_id in averaged_segmented_meetings_dict:
         # meeting_input = meeting["input"]
         # meeting_output = meeting["output"]
         # assert len(meeting_input) == 1
@@ -127,11 +128,12 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
 def main():
     """main"""
     args = setup()
-    averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
-    segmented_speakers_dict = load_obj("segmented_speakers_dict")
+    # averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
+    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts("eval")
+    # segmented_speakers_dict = load_obj("segmented_speakers_dict")
     results_dict = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
-    for key, value in results_dict.items():
-        print(key, value)
+    #for key, value in results_dict.items():
+        #print(key, value)
     # if args.output_json is not None:
     #     write_results_dict(results_dict, args.output_json)
 
