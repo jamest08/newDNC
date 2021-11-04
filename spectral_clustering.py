@@ -3,7 +3,7 @@
 import os
 import sys
 import argparse
-import json
+#import json
 import itertools
 import numpy as np
 from tqdm import tqdm
@@ -11,7 +11,7 @@ import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 # import pickle
-from data_loading import build_segment_dicts, build_global_dvec_dict
+from data_loading import build_segment_dicts, build_global_dvec_dict, open_rttm
 
 def setup():
     """Get cmds and setup directories."""
@@ -125,22 +125,38 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
 #         json_file.write(json.dumps(output_dict, indent=4, sort_keys=True).encode('utf_8'))
 #     return
 
+def write_to_rttm(results_dict):  # Hard coded for eval: change 
+    """Creates a copy of data rttm file, replacing the speaker label column with cluster label."""
+    segments_desc_list = open_rttm("data/rttms/test_eval.rttm")
+    with open("results.rttm", "w") as results_file:
+        for segment_desc in segments_desc_list:
+            meeting_id = segment_desc[1]
+            # change speaker label column (7)
+            segment_desc[7] = results_dict[meeting_id][0]
+            results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
+            for item in segment_desc:
+                results_file.write(str(item) + ' ')
+            results_file.write('\n')
+
+
 def main():
     """main"""
     args = setup()
     # averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
     averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts("eval")
-    #global_dvec_dict = build_global_dvec_dict("eval")
+    # global_dvec_dict = build_global_dvec_dict("eval")
     # averaged_segmented_meetings_dict = {}
     # averaged_segmented_meetings_dict['meeting_id'] = global_dvec_dict["MEE071"]
     # segmented_speakers_dict = {}
     # segmented_speakers_dict['meeting_id'] = ["MEE071" for i in range(len(averaged_segmented_meetings_dict['meeting_id']))]
     # segmented_speakers_dict = load_obj("segmented_speakers_dict")
     results_dict = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
-    #for key, value in results_dict.items():
-        #print(key, value)
+    write_to_rttm(results_dict)
+    # for key, value in results_dict.items():
+        # print(key, value)
     # if args.output_json is not None:
     #     write_results_dict(results_dict, args.output_json)
 
 if __name__ == '__main__':
     main()
+    

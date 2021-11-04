@@ -40,8 +40,8 @@ def open_scp(scp_path):
 
 
 def build_global_dvec_dict(dataset):
-    """Key is speaker, value is list of all unaveraged d_vectors for that speaker.
-    D-vectors from across all meetings # currently averaged
+    """Key is speaker, value is list of all averaged d_vectors for that speaker.
+    D-vectors from across all meetings
     """
     scp_path, rttm_path = get_file_paths(dataset)
     global_dvec_dict = {}
@@ -88,11 +88,12 @@ def build_meeting_dvec_dict(dataset):
                 start_index += 100
                 end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index+1]
+            averaged_segment = np.mean(segment, axis=0)
             speaker = segment_desc[2]
             if speaker not in inner_dvec_dict:
-                inner_dvec_dict[speaker] = [segment]
+                inner_dvec_dict[speaker] = [averaged_segment]
             else:
-                inner_dvec_dict[speaker].append(segment)
+                inner_dvec_dict[speaker].append(averaged_segment)
         meeting_dvec_dict[meeting_id] = inner_dvec_dict
     return meeting_dvec_dict
 
