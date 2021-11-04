@@ -11,7 +11,7 @@ import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 # import pickle
-from data_loading import build_segment_dicts
+from data_loading import build_segment_dicts, build_global_dvec_dict
 
 def setup():
     """Get cmds and setup directories."""
@@ -130,6 +130,11 @@ def main():
     args = setup()
     # averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
     averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts("eval")
+    #global_dvec_dict = build_global_dvec_dict("eval")
+    # averaged_segmented_meetings_dict = {}
+    # averaged_segmented_meetings_dict['meeting_id'] = global_dvec_dict["MEE071"]
+    # segmented_speakers_dict = {}
+    # segmented_speakers_dict['meeting_id'] = ["MEE071" for i in range(len(averaged_segmented_meetings_dict['meeting_id']))]
     # segmented_speakers_dict = load_obj("segmented_speakers_dict")
     results_dict = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
     #for key, value in results_dict.items():

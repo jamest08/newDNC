@@ -10,9 +10,8 @@ from numpy.lib.function_base import average
 
 def open_rttm(rttm_path):
     """Open rttm file containing segmentation data and return as numpy array."""
-    rttm_file = open(rttm_path, "r")
-    segments_desc_list = [(line.strip()).split() for line in rttm_file]
-    rttm_file.close()
+    with open(rttm_path, "r") as rttm_file:
+        segments_desc_list = [(line.strip()).split() for line in rttm_file]
     return segments_desc_list
 
 
@@ -34,16 +33,15 @@ def build_segment_desc_dict(rttm_path):
 
 def open_scp(scp_path):
     """Open scp file containing paths to meeting d-vectors and return numpy array."""
-    scp_file = open(scp_path, "r")
+    with open(scp_path, "r") as scp_file:
     # create list of lists [meeting_id, path_to_ark]
-    meeting_path_lists = [(line.strip()).split() for line in scp_file]
-    scp_file.close()
+        meeting_path_lists = [(line.strip()).split() for line in scp_file]
     return meeting_path_lists
 
 
 def build_global_dvec_dict(dataset):
     """Key is speaker, value is list of all unaveraged d_vectors for that speaker.
-    D-vectors from across all meetings
+    D-vectors from across all meetings # currently averaged
     """
     scp_path, rttm_path = get_file_paths(dataset)
     global_dvec_dict = {}
@@ -55,16 +53,17 @@ def build_global_dvec_dict(dataset):
         meeting_dvectors_array = kaldiio.load_mat(meeting_path)
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
-            end_index = max(segment_desc[1], len(meeting_dvectors_array)-1)
+            end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
             if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
                 start_index += 100
                 end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index+1]
+            averaged_segment = np.mean(segment, axis=0)
             speaker = segment_desc[2]
             if speaker not in global_dvec_dict:
-                global_dvec_dict[speaker] = segment
+                global_dvec_dict[speaker] = [averaged_segment]
             else:
-                global_dvec_dict[speaker] = np.append(global_dvec_dict[speaker], segment, axis=0)
+                global_dvec_dict[speaker].append(averaged_segment)
     return global_dvec_dict
 
 
@@ -84,16 +83,16 @@ def build_meeting_dvec_dict(dataset):
         meeting_dvectors_array = kaldiio.load_mat(meeting_path)
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
-            end_index = max(segment_desc[1], len(meeting_dvectors_array)-1)
+            end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
             if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
                 start_index += 100
                 end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index+1]
             speaker = segment_desc[2]
             if speaker not in inner_dvec_dict:
-                inner_dvec_dict[speaker] = segment
+                inner_dvec_dict[speaker] = [segment]
             else:
-                inner_dvec_dict[speaker] = np.append(inner_dvec_dict[speaker], segment, axis=0)
+                inner_dvec_dict[speaker].append(segment)
         meeting_dvec_dict[meeting_id] = inner_dvec_dict
     return meeting_dvec_dict
 
@@ -105,7 +104,7 @@ def build_segment_dicts(dataset):
     segmented_speakers_dict: Key is meeting_id, value is array of speakers aligning with segments.
     """
     scp_path, rttm_path = get_file_paths(dataset)
-    # create three dictionaries each with key as meeting_id:
+    # create two dictionaries with key as meeting_id:
     segmented_speakers_dict = {}  # value is array of speakers aligning with segments
     averaged_segmented_meetings_dict = {}  # value is array of segments.  Each segment is 1 d-vector
     meeting_path_lists = open_scp(scp_path)
@@ -118,7 +117,7 @@ def build_segment_dicts(dataset):
         averaged_segments = []
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
-            end_index = max(segment_desc[1], len(meeting_dvectors_array)-1)
+            end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
             if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
                 start_index += 100
                 end_index -= 100
