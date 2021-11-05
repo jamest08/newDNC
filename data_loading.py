@@ -137,14 +137,14 @@ def get_file_paths(dataset):
     Dataset can be either 'train', 'dev' or 'eval'.
     """
     if dataset == 'train':
-        scp_path = "data/arks/train.scp"
-        rttm_path = "data/rttms/test_train.rttm"
+        scp_path = "data/arks.concat/train.scp"
+        rttm_path = "data/rttms.concat/train.rttm"
     elif dataset == 'dev':
-        scp_path = "data/arks/dev.scp"
-        rttm_path = "data/rttms/test_dev.rttm"
+        scp_path = "data/arks.concat/dev.scp"
+        rttm_path = "data/rttms.concat/dev.rttm"
     elif dataset == 'eval':
-        scp_path = "data/arks/eval.scp"
-        rttm_path = "data/rttms/test_eval.rttm"
+        scp_path = "data/arks.concat/eval.scp"
+        rttm_path = "data/rttms.concat/eval.rttm"
     else:
         raise ValueError("Expected dataset argument to be 'train', 'dev' or 'eval'")
     return scp_path, rttm_path

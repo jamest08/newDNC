@@ -127,7 +127,7 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
 
 def write_to_rttm(results_dict):  # Hard coded for eval: change 
     """Creates a copy of data rttm file, replacing the speaker label column with cluster label."""
-    segments_desc_list = open_rttm("data/rttms/test_eval.rttm")
+    segments_desc_list = open_rttm("data/rttms.concat/eval.rttm")
     with open("results.rttm", "w") as results_file:
         for segment_desc in segments_desc_list:
             meeting_id = segment_desc[1]
