@@ -134,8 +134,9 @@ def write_to_rttm(results_dict):  # Hard coded for eval: change
             # change speaker label column (7)
             segment_desc[7] = results_dict[meeting_id][0]
             results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
-            for item in segment_desc:
-                results_file.write(str(item) + ' ')
+            for i in range(len(segment_desc)-1):
+                results_file.write(str(segment_desc[i]) + ' ')
+            results_file.write(str(segment_desc[len(segment_desc)-1]))  # no trailing space
             results_file.write('\n')
 
 
