@@ -56,9 +56,9 @@ def build_global_dvec_dict(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
-            if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-                start_index += 100
-                end_index -= 100
+            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
+            #     start_index += 100
+            #     end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index+1]
             averaged_segment = np.mean(segment, axis=0)
             speaker = segment_desc[2]
@@ -86,9 +86,9 @@ def build_meeting_dvec_dict(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
-            if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-                start_index += 100
-                end_index -= 100
+            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
+            #     start_index += 100
+            #     end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index+1]
             averaged_segment = np.mean(segment, axis=0)
             speaker = segment_desc[2]
@@ -121,10 +121,10 @@ def build_segment_dicts(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = min(segment_desc[1], len(meeting_dvectors_array)-1)
-            if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-                start_index += 100
-                end_index -= 100
-            segment = meeting_dvectors_array[start_index:end_index+1]
+            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
+            #     start_index += 100
+            #     end_index -= 100
+            segment = meeting_dvectors_array[start_index:end_index+1]  # is this right
             averaged_segment = np.mean(segment, axis=0)
             speaker = segment_desc[2]
             speakers.append(speaker)

@@ -11,7 +11,7 @@ import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 # import pickle
-from data_loading import build_segment_dicts, build_global_dvec_dict, open_rttm
+from data_loading import build_segment_dicts, build_global_dvec_dict, open_rttm, get_file_paths
 
 def setup():
     """Get cmds and setup directories."""
@@ -21,7 +21,7 @@ def setup():
     cmdparser.add_argument('--gauss-blur', help='gaussian blur for spectral clustering',
                            type=float, default=0.1)
     cmdparser.add_argument('--p-percentile', help='p_percentile for spectral clustering',
-                           type=float, default=0.95)
+                           type=float, default=0.93)
     cmdparser.add_argument('--custom-dist', help='e.g. euclidean, cosine', type=str, default=None)
     # cmdparser.add_argument('--json-out', dest='output_json',
     #                        help='json output file used for scoring', default=None)
@@ -110,9 +110,10 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
         _correct = permutation_invariant_seqmatch(hypothesis, reference)
         total_length += len(reference)
         total_correct += _correct
+        percentage_correct = total_correct * 100 / total_length
     print("Total Correct: %s, Total Length: %s, Percentage Correct: %s" %
-          (str(total_correct), str(total_length), str(total_correct * 100 / total_length)))
-    return results_dict
+          (str(total_correct), str(total_length), str(percentage_correct)))
+    return results_dict, percentage_correct
 
 
 # def write_results_dict(results_dict, output_json):
@@ -125,34 +126,58 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
 #         json_file.write(json.dumps(output_dict, indent=4, sort_keys=True).encode('utf_8'))
 #     return
 
-def write_to_rttm(results_dict):  # Hard coded for eval: change 
-    """Creates a copy of data rttm file, replacing the speaker label column with cluster label."""
-    segments_desc_list = open_rttm("data/rttms.concat/eval.rttm")
-    with open("results.rttm", "w") as results_file:
+def write_to_rttm(results_dict, dataset):
+    """Creates a copy of data rttm file, replacing the speaker label column with cluster label.
+    Also rewrites reference file with <NA> instead of indices."""
+    _, rttm_path = get_file_paths(dataset)
+    segments_desc_list = open_rttm(rttm_path)
+    with open(dataset + "_results.rttm", "w") as results_file, \
+         open(dataset + "_reference.rttm", "w") as reference_file:
         for segment_desc in segments_desc_list:
             meeting_id = segment_desc[1]
-            # change speaker label column (7)
+            segment_desc[5] = "<NA>"
+            segment_desc[6] = "<NA>"
+            for i in range(7):
+                results_file.write(str(segment_desc[i]) + ' ')
+                reference_file.write(str(segment_desc[i]) + ' ')
+            reference_file.write(str(segment_desc[7]) + ' ')
+            # change speaker label column (7) for results_dict
             segment_desc[7] = results_dict[meeting_id][0]
             results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
-            for i in range(len(segment_desc)-1):
-                results_file.write(str(segment_desc[i]) + ' ')
-            results_file.write(str(segment_desc[len(segment_desc)-1]))  # no trailing space
+            results_file.write(str(segment_desc[7]) + ' ')
+            results_file.write("<NA>")
+            reference_file.write("<NA>")
             results_file.write('\n')
+            reference_file.write('\n')
+
 
 
 def main():
     """main"""
+    # optimising parameters
+    # dataset = "dev"
+    # averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
+    # args = setup()
+    # for p_percentile in [0.8, 0.85, 0.87, 0.88, 0.89]:
+    #     print(p_percentile)
+    #     args.p_percentile = p_percentile
+    #     results_dict, percentage_correct = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
+
+    dataset = "eval"
     args = setup()
+    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
+    results_dict, _ = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
+    write_to_rttm(results_dict, dataset)
+    
     # averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
-    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts("eval")
+    
     # global_dvec_dict = build_global_dvec_dict("eval")
     # averaged_segmented_meetings_dict = {}
     # averaged_segmented_meetings_dict['meeting_id'] = global_dvec_dict["MEE071"]
     # segmented_speakers_dict = {}
     # segmented_speakers_dict['meeting_id'] = ["MEE071" for i in range(len(averaged_segmented_meetings_dict['meeting_id']))]
     # segmented_speakers_dict = load_obj("segmented_speakers_dict")
-    results_dict = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
-    write_to_rttm(results_dict)
+    
     # for key, value in results_dict.items():
         # print(key, value)
     # if args.output_json is not None:

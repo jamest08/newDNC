@@ -1,240 +1,101 @@
-"""Augment data on-the-fly"""
+"""Augment data with three different techniques"""
 
 import kaldiio
 import numpy as np
-import os
-import sys
-import argparse
-import json
-import multiprocessing as mp
-from collections import OrderedDict
+from numpy import random
+from numpy.core.defchararray import index
+from numpy.lib.function_base import average
+from data_loading import build_segment_dicts, build_global_dvec_dict
 
-import numpy as np
-from tqdm import tqdm
-import kaldiio
-import utils
-
-IDPOS = 2
-MAXLOOPITERATIONS = 150
-EPS = 10e-15
 np.random.seed(0)
 
-def setup():
-    """Get cmds and setup directories."""
-    parser = argparse.ArgumentParser(description='Prepare Data for Neural Speaker Clustering',
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--input-scps', dest='inscps', action='append', type=str,
-                        help='scp files of input data "train.scp eval.scp dev.scp xxx.mlf"')
-    parser.add_argument('--input-mlfs', dest='inmlfs', action='append', type=str,
-                        help='MLF files of the input data "train.mlf eval.mlf dev.mlf xxx.mlf"')
-    parser.add_argument('--filtEncomp', default=False, action='store_true',
-                        help='Delete segments encompassed by another')
-    parser.add_argument('--maxlen', type=int, default=None,
-                        help='maximum input length')
-    parser.add_argument('--variableL', nargs=2, type=float, default=None,
-                        help='min and max percentages of sequence length'\
-                             'between which uniform sampling is used')
-    parser.add_argument('--augment', type=int, default=0,
-                        help='how many times to augment (0 means no augment, used for evaluation)')
-    parser.add_argument('--evensplit', default=False, action='store_true',
-                        help='split of meetings will be into equal chunks'\
-                        'cannot be used together with variableL'\
-                        'augment has to be 0, maxlen has to be set')
-    parser.add_argument('--dvectordict', type=str, default=None, action=utils.Abspath,
-                        help='dictionary of set of dvectors to be used')
-    parser.add_argument('--randomspeaker', default=False, action='store_true',
-                        help='for each meeting randomise which speakers to use'\
-                        'requires dvectordict')
-    parser.add_argument('--maxprocesses', type=int, default=1,
-                        help='number of processes in parallel')
-    parser.add_argument('--varnormalise', default=False, action='store_true',
-                        help='Does variance normalisation by multiplying by sqrt(feature_dim)')
-    parser.add_argument('outdir', type=str, action='store',
-                        help='Output Directory for the Data')
-    cmdargs = parser.parse_args()
 
-    # ensure list of scps and mlfs has the same length
-    if len(cmdargs.inscps) != len(cmdargs.inmlfs):
-        utils.print_error("number of input scps files and input mlfs has to be the same")
-    for idx, scp in enumerate(cmdargs.inscps):
-        cmdargs.inscps[idx] = utils.get_abs_path(scp)
-        if not scp.endswith('.scp'):
-            utils.print_error('scp path has to end with .scp')
-    for idx, mlf in enumerate(cmdargs.inmlfs):
-        cmdargs.inmlfs[idx] = utils.get_abs_path(mlf)
-        if not mlf.endswith('.mlf'):
-            utils.print_error('mlf path has to end with .mlf')
-    if cmdargs.randomspeaker:
-        if cmdargs.dvectordict is None:
-            utils.print_error("if randomspeaker is used dvectordict has to be passed")
-    if cmdargs.evensplit:
-        if cmdargs.augment != 0:
-            utils.print_error("When using evensplit, augment has to be 0")
-        if cmdargs.maxlen is None:
-            utils.print_error("When using evensplit, maxlen has to be set")
-        if cmdargs.variableL is not None:
-            utils.print_error("When using evensplit, variableL cannot be used")
-    # setup output directory and cache commands
-    utils.check_output_dir(cmdargs.outdir, True)
-    utils.cache_command(sys.argv, cmdargs.outdir)
-    utils.change_dir(cmdargs.outdir)
-    return cmdargs
-
-
-def augment_single_meeting(args, basename, meeting_name, seg_list,
-                           dvectors, _filenames, _meetings_out, _idx):
+def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speakers_dict,
+                             meeting_length):
+    """Sub-sequence randomisation.
+       Randomly chooses a real meeting and samples a sub_meeting at segment boundaries.
+       meeting_length is length of new meeting in number of segments.
     """
-        Performs data augmentation on single meeting:
-        1. Random shifts of possibly variable length
-        2. input randomisation using single or two-level dictionary (meeting,spk)
-        If args.augment==0 then meeting is only split and not augmented, used for evaluation
+    # ensure chosen meeting is longer than required sub-sample length (meeting_length)
+    valid_meeting_ids = np.array(list(averaged_segmented_meetings_dict.keys()))
+    indexes_to_remove = []
+    for i in range(len(valid_meeting_ids)):
+        if len(averaged_segmented_meetings_dict[valid_meeting_ids[i]]) <= meeting_length:
+            indexes_to_remove.append(i)
+    valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
+    if len(valid_meeting_ids) == 0:
+        raise ValueError("meeting_length must be less than length of largest meeting in dataset")
+    # randomly choose meeting
+    random_meeting_id = np.random.choice(valid_meeting_ids)
+    random_meeting = averaged_segmented_meetings_dict[random_meeting_id]
+    # randomly choose starting index
+    max_start_idx = len(random_meeting) - meeting_length
+    random_start_idx = np.random.choice(max_start_idx+1)
+    end_idx = random_start_idx + meeting_length - 1
+    # produce sub-meeting
+    augmented_meeting = random_meeting[random_start_idx:end_idx+1]
+    augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
+    return augmented_meeting, augmented_speakers
+    
+
+# need to add shorten segments to less than 2s
+def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict):
+    """Input vectors randomisation.
+       Randomly sample sequence of speaker labels.  For each label assign a speaker identity.
+       For each segment in the sequence, sample a random d-vector from that speaker.
     """
-    # NB: filter encompassed already performed in data_loading.py
-
-    # load data and process
-    all_spk, all_mat = [], []
-    meeting_len = 0
-    for segment in seg_list:
-        cur_spk = segment[2]
-        cur_mat = kaldiio.load_mat(segment[0])
-        # l2 norm before average
-        cur_mat = cur_mat / np.linalg.norm(cur_mat, axis=1, keepdims=True)
-        # average
-        cur_mat = np.mean(cur_mat, axis=0, keepdims=True)
-        # l2 norm after average
-        cur_mat = cur_mat / np.linalg.norm(cur_mat, axis=1, keepdims=True)
-        all_spk.append(cur_spk)
-        all_mat.append(cur_mat)
-        meeting_len += 1
-    # concatenate the segment level embeddings
-    all_mat = np.concatenate(all_mat, axis=0)
-    assert all_mat.shape[0] == len(all_spk) == meeting_len
-
-    meetings_ark, meetings_out = {}, {}
-    if args.augment >= 1:
-        assert (args.maxlen is not None or args.variableL is not None), "Set maxlen or variableL"
-        for i in range(args.augment):
-            maxlen = get_maxlen(args, meeting_len)
-            start_idx = get_startidx(meeting_len, maxlen)
-            cur_meeting_name = meeting_name + '-%03d' % i
-            cur_meeting_mat = all_mat[start_idx:(start_idx+maxlen)]
-            cur_spk = all_spk[start_idx:(start_idx+maxlen)]
-            # replace cur_mat with randomly sampled d-vectors
-            if dvectors is not None:
-                dvec_dict = dvectors
-                if args.randomspeaker:
-                    # sorting to make code reproducable
-                    spk_in_meeting = sorted(list(set(cur_spk)))
-                    # 2-level dictionary, random pick a meeting first
-                    if meeting_name in dvectors:
-                        all_meeting_names = list(dvectors.keys())
-                        # sample a meeting with at the least same number
-                        # of speakers as current (sub-)meeting
-                        sample_count = 0
-                        while True:
-                            sample_count += 1
-                            assert sample_count < MAXLOOPITERATIONS, "possibly an infinite loop"
-                            random_meeting_name = np.random.choice(all_meeting_names)
-                            if len(dvectors[random_meeting_name].item()) >= len(spk_in_meeting):
-                                break
-                        dvec_dict = dvectors[random_meeting_name].item()
-                        sorted_keys = sorted(dvec_dict.keys())
-                        ordered_dvectors = OrderedDict([])
-                        for key in sorted_keys:
-                            ordered_dvectors[key] = dvec_dict[key]
-                        dvec_dict = ordered_dvectors
-                    else:
-                        assert list(spk_in_meeting)[0] in dvectors, \
-                            "only 1-level or 2-lvel dictionary is allowed"
-                    all_speakers = list(dvec_dict.keys())
-                    new_spk = np.random.choice(all_speakers, len(spk_in_meeting), replace=False)
-                    spk_mapping = {orig_spk: rand_spk
-                                   for orig_spk, rand_spk in zip(spk_in_meeting, new_spk)}
-                    cur_spk = [spk_mapping[orig_spk] for orig_spk in cur_spk]
-                else:
-                    if isinstance(next(dvectors.values()), dict):
-                        dvec_dict = dvectors[meeting_name]
-                samples = [np.random.choice(np.arange(dvec_dict[spk].shape[0])) for spk in cur_spk]
-                cur_meeting_mat = [dvec_dict[spk][sample]
-                                   for spk, sample in zip(cur_spk, samples)]
-                cur_meeting_mat = np.array(cur_meeting_mat)
-            else:
-                assert args.randomspeaker is False, "randomspeaker not without dvector dictionary"
-            cur_label = get_label_from_spk(cur_spk)
-            # np.sqrt(cur_meeting_mat.shape[1]) does variance normalisation
-            if args.varnormalise is True:
-                cur_meeting_mat = cur_meeting_mat * np.sqrt(cur_meeting_mat.shape[1])
-            meetings_ark[cur_meeting_name] = cur_meeting_mat
-            meetings_out[cur_meeting_name] = cur_meeting_mat.shape, cur_label
-    else:
-        #maxlen = float('inf') if args.maxlen is None else args.maxlen
-        assert args.augment == 0, "invalid augment value"
-        # poping out matrices until meet maxlen, form sub meeting
-        segment_idx = 0
-        while all_mat.size > 0:
-            maxlen = get_maxlen(args, meeting_len)
-            # pop first maxlen elements from all_mat
-            cur_meeting_mat = all_mat[0:maxlen]
-            all_mat = all_mat[maxlen:]
-            # pop first maxlen elements from all_spk
-            cur_spk = all_spk[0:maxlen]
-            all_spk = all_spk[maxlen:]
-            cur_meeting_name = meeting_name + '-%03d' % segment_idx
-            cur_label = get_label_from_spk(cur_spk)
-            # np.sqrt(cur_meeting_mat.shape[1]) does variance normalisation
-            if args.varnormalise is True:
-                cur_meeting_mat = cur_meeting_mat *  np.sqrt(cur_meeting_mat.shape[1])
-            meetings_ark[cur_meeting_name] = cur_meeting_mat
-            meetings_out[cur_meeting_name] = cur_meeting_mat.shape, cur_label
-            segment_idx += 1
-            assert all_mat.shape[0] == len(all_spk)
-
-    filename = os.path.join(basename, meeting_name)
-    ark_path = utils.get_abs_path(filename + '.ark')
-    with kaldiio.WriteHelper('ark,scp:%s,%s.scp' % (ark_path, filename)) as writer:
-        for key, mat in meetings_ark.items():
-            writer(key, mat)
-    _filenames[_idx] = filename
-    _meetings_out[_idx] = meetings_out
+    # each entry in array is list of speakers in a meeting
+    speaker_labels_array = np.array(list(segmented_speakers_dict.values()), dtype=list)
+    # choose random sequence of speaker labels
+    random_speaker_seq = np.random.choice(speaker_labels_array)
+    # create set of current unique speakers in sequence
+    current_speakers = set(random_speaker_seq)
+    # create set of all unique speakers available
+    all_speakers = set(global_dvec_dict.keys())
+    # create dictionary mapping current speakers to new speakers
+    speaker_mapping = {}
+    for current_speaker in current_speakers:
+        new_speaker = np.random.choice(list(all_speakers))
+        all_speakers.remove(new_speaker)  # prevents same new speaker being chosen twice
+        speaker_mapping[current_speaker] = new_speaker
+    # update speaker sequence with new speakers
+    random_speaker_seq = [speaker_mapping[current_speaker] for current_speaker in random_speaker_seq]
+    # create new meeting from label sequence, sampling random d-vectors from each speaker
+    augmented_meeting = []
+    for speaker in random_speaker_seq:
+        random_idx = np.random.choice(len(global_dvec_dict[speaker]))
+        random_dvec = global_dvec_dict[speaker][random_idx]
+        augmented_meeting.append(random_dvec)
+    return augmented_meeting, random_speaker_seq
 
 
-def get_maxlen(args, meetinglength):
-    """ based on variableL, maxlen is randomly set. If variableL is None then maxlen=args.maxlen"""
-    if args.variableL is not None:
-        if args.maxlen is not None:
-            maxlen = int(np.random.uniform(args.variableL[0], args.variableL[1]) * min(meetinglength, args.maxlen))-1
-        else:
-            maxlen = int(np.random.uniform(args.variableL[0], args.variableL[1]) * meetinglength)-1
-    elif args.evensplit:
-        assert args.maxlen is not None
-        assert args.variableL is None
-        maxlen = np.ceil(meetinglength / np.ceil(meetinglength / args.maxlen))
-    else:
-        if args.maxlen is not None:
-            maxlen = args.maxlen
-        else:
-            maxlen = meetinglength
-    return maxlen
+def meeting_speaker_randomisation():
+    pass
 
 
-def get_startidx(meetinglength, maxlen):
+def Diaconis_augmentation():
+    pass
+
+
+def produce_augmented_batch(batch_size, sub=True, speaker=True, Diac=True):
+    """Produces a batch of augmented data for training.
+       batch size and augmentation types can be specified.
     """
-        Pick starting point of sub-meeting uniformly random
-    """
-    # The commented code is used in the old version of the code
-    #TAIL = 30
-    #assert meetinglength > 30
-    #start_idx = np.random.randint(meetinglength - TAIL)
-    start_idx = np.random.randint(meetinglength - maxlen)
-    return start_idx
+    pass
 
 
-def get_label_from_spk(spk_list):
-    """
-        Returns dictionary mapping from speaker to output label (0,1,2...)
-    """
-    spk_mapping = {}
-    for spk in spk_list:
-        if spk not in spk_mapping:
-            spk_mapping[spk] = len(spk_mapping)
-    return [spk_mapping[spk] for spk in spk_list]
+def main():
+    """Main"""
+    dataset = "dev"
+    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
+    aug_meeting, aug_speakers = sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speakers_dict, 300)
+
+    # global_dvec_dict = build_global_dvec_dict(dataset)
+    # _, segmented_speakers_dict = build_segment_dicts(dataset)
+    # #print([len(meeting) for meeting in segmented_speakers_dict.values()])
+    # aug_meeting = global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict)
+
+
+if __name__ == '__main__':
+    main()
+    
