@@ -10,7 +10,7 @@ from tqdm import tqdm
 import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
-# import pickle
+
 from data_loading import build_segment_dicts, build_global_dvec_dict, open_rttm, get_file_paths
 
 def setup():
@@ -35,10 +35,6 @@ def setup():
     #     utils.cache_command(sys.argv, outdir)
     return cmdargs
 
-# def load_obj(name):
-#     """Loads an object from /obj using pickle."""
-#     with open('obj/' + name + '.pkl', 'rb') as f:
-#         return pickle.load(f)
 
 def do_spectral_clustering(dvec_list, gauss_blur=1.0, p_percentile=0.95,
                            minclusters=2, maxclusters=4, truek=4, custom_dist=None):
@@ -55,6 +51,7 @@ def do_spectral_clustering(dvec_list, gauss_blur=1.0, p_percentile=0.95,
                                       gaussian_blur_sigma=gauss_blur, custom_dist=custom_dist)
     return clusterer.predict(dvec_list)
 
+
 def permutation_invariant_seqmatch(hypothesis, reference_list):
     """For calculating segment level error rate calculation"""
     num_perm = max(4, len(set(hypothesis)))
@@ -65,6 +62,7 @@ def permutation_invariant_seqmatch(hypothesis, reference_list):
         correct.append(sum([1 for hyp, ref in zip(hypothesis, reference_list)
                             if mapping[hyp] == ref]))
     return max(correct)
+
 
 def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict):
     """Loops through all meetings to call spectral clustering function"""
@@ -110,21 +108,11 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
         _correct = permutation_invariant_seqmatch(hypothesis, reference)
         total_length += len(reference)
         total_correct += _correct
-        percentage_correct = total_correct * 100 / total_length
+    percentage_correct = total_correct * 100 / total_length
     print("Total Correct: %s, Total Length: %s, Percentage Correct: %s" %
           (str(total_correct), str(total_length), str(percentage_correct)))
     return results_dict, percentage_correct
 
-
-# def write_results_dict(results_dict, output_json):
-#     """Writes the results dictionary into json file"""
-#     output_dict = {"utts":{}}
-#     for meeting_name, hypothesis in results_dict.items():
-#         hypothesis = " ".join([str(i) for i in hypothesis]) + " 4"
-#         output_dict["utts"][meeting_name] = {"output":[{"rec_tokenid":hypothesis}]}
-#     with open(output_json, 'wb') as json_file:
-#         json_file.write(json.dumps(output_dict, indent=4, sort_keys=True).encode('utf_8'))
-#     return
 
 def write_to_rttm(results_dict, dataset):
     """Creates a copy of data rttm file, replacing the speaker label column with cluster label.
@@ -168,20 +156,7 @@ def main():
     averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
     results_dict, _ = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
     write_to_rttm(results_dict, dataset)
-    
-    # averaged_segmented_meetings_dict = load_obj("averaged_segmented_meetings_dict")
-    
-    # global_dvec_dict = build_global_dvec_dict("eval")
-    # averaged_segmented_meetings_dict = {}
-    # averaged_segmented_meetings_dict['meeting_id'] = global_dvec_dict["MEE071"]
-    # segmented_speakers_dict = {}
-    # segmented_speakers_dict['meeting_id'] = ["MEE071" for i in range(len(averaged_segmented_meetings_dict['meeting_id']))]
-    # segmented_speakers_dict = load_obj("segmented_speakers_dict")
-    
-    # for key, value in results_dict.items():
-        # print(key, value)
-    # if args.output_json is not None:
-    #     write_results_dict(results_dict, args.output_json)
+
 
 if __name__ == '__main__':
     main()
