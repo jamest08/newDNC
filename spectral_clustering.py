@@ -11,7 +11,8 @@ import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 
-from data_loading import build_segment_dicts, build_global_dvec_dict, open_rttm, get_file_paths
+from data_loading import build_segment_desc_dict, build_segment_dicts, build_global_dvec_dict, \
+                         open_rttm, get_file_paths
 
 def setup():
     """Get cmds and setup directories."""
@@ -85,8 +86,11 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
         # reference = [int(ref) for ref in reference]
         reference = segmented_speakers_dict[meeting_id]
         # assign unique integer to each speaker label
+        #print("meeting_id: ", meeting_id, '\n')
+        #print("labels: ", reference)
         ref_dict = {label: i for i, label in enumerate(set(reference))}
         reference = [ref_dict[label] for label in reference]
+        #print("numbers: ", reference)
         #assert len(reference) == len(cur_mat)
         if len(reference) == 1:
             # results_dict[midx] = [0]
@@ -105,6 +109,7 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
             raise
         # results_dict[midx] = hypothesis
         results_dict[meeting_id] = hypothesis
+        #print("hypothesis", hypothesis)
         _correct = permutation_invariant_seqmatch(hypothesis, reference)
         total_length += len(reference)
         total_correct += _correct
@@ -116,27 +121,36 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
 
 def write_to_rttm(results_dict, dataset):
     """Creates a copy of data rttm file, replacing the speaker label column with cluster label.
-    Also rewrites reference file with <NA> instead of indices."""
+    Also rewrites reference file with <NA> instead of indices and removes filtered segments."""
     _, rttm_path = get_file_paths(dataset)
-    segments_desc_list = open_rttm(rttm_path)
+    segments_desc_list = open_rttm(rttm_path)  # non-filtered
+    segments_desc_dict = build_segment_desc_dict(rttm_path) # filtered
     with open(dataset + "_results.rttm", "w") as results_file, \
          open(dataset + "_reference.rttm", "w") as reference_file:
-        for segment_desc in segments_desc_list:
-            meeting_id = segment_desc[1]
-            segment_desc[5] = "<NA>"
-            segment_desc[6] = "<NA>"
-            for i in range(7):
-                results_file.write(str(segment_desc[i]) + ' ')
-                reference_file.write(str(segment_desc[i]) + ' ')
-            reference_file.write(str(segment_desc[7]) + ' ')
-            # change speaker label column (7) for results_dict
-            segment_desc[7] = results_dict[meeting_id][0]
-            results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
-            results_file.write(str(segment_desc[7]) + ' ')
-            results_file.write("<NA>")
-            reference_file.write("<NA>")
-            results_file.write('\n')
-            reference_file.write('\n')
+         for meeting_id, meeting in segments_desc_dict.items():
+            for segment in meeting:
+                reference_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 
+                                     str(segment[5]) + ' <NA> <NA> ' + segment[2] + ' <NA>\n')
+                hypothesis = results_dict[meeting_id][0]
+                results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
+                results_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 
+                                     str(segment[5]) + ' <NA> <NA> ' + str(hypothesis) + ' <NA>\n')
+        # for segment_desc in segments_desc_list:
+        #     meeting_id = segment_desc[1]
+        #     segment_desc[5] = "<NA>"
+        #     segment_desc[6] = "<NA>"
+        #     for i in range(7):
+        #         results_file.write(str(segment_desc[i]) + ' ')
+        #         reference_file.write(str(segment_desc[i]) + ' ')
+        #     reference_file.write(str(segment_desc[7]) + ' ')
+        #     # change speaker label column (7) for results_dict
+        #     segment_desc[7] = results_dict[meeting_id][0]
+        #     results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
+        #     results_file.write(str(segment_desc[7]) + ' ')
+        #     results_file.write("<NA>")
+        #     reference_file.write("<NA>")
+        #     results_file.write('\n')
+        #     reference_file.write('\n')
 
 
 

@@ -27,9 +27,16 @@ def build_segment_desc_dict(rttm_path):
         start_index = int(segment_desc[5])
         end_index = int(segment_desc[6])
         speaker_label = segment_desc[7]
-        segment_desc_dict[meeting_id].append((start_index, end_index, speaker_label))
+        start_time = float(segment_desc[3])
+        duration = float(segment_desc[4])
+        end_time = start_time + duration
+        segment_desc_dict[meeting_id].append((start_index, end_index, speaker_label,
+                                              start_time, end_time, duration))
     for meeting_id, segment_descs in segment_desc_dict.items():  # filter encompassed segments
-        segment_desc_dict[meeting_id] = filter_encompassed_segments(segment_descs)
+        filtered_segment = filter_encompassed_segments(segment_descs)
+        if filtered_segment == []:
+            print('empty meeting')
+        segment_desc_dict[meeting_id] = filtered_segment
     return segment_desc_dict
 
 
@@ -156,17 +163,16 @@ def get_file_paths(dataset):
 
 
 def filter_encompassed_segments(_seg_list):
-    """Remove segments completely contained within another one"""
-    _seg_list.sort(key=lambda tup: tup[0])
+    """Remove segments completely contained within another one based on time (not indices)."""
+    _seg_list.sort(key=lambda tup: tup[3])
     seg_list = []
-    for _, segment in enumerate(_seg_list):
-        start_time = segment[0]
-        end_time = segment[1]
-        start_before = [_seg for _seg in _seg_list if _seg[0] <= start_time]
-        end_after = [_seg for _seg in _seg_list if _seg[1] >= end_time]
+    for segment in _seg_list:
+        start_time = segment[3]
+        end_time = segment[4]
+        start_before = [_seg for _seg in _seg_list if _seg[3] <= start_time]
+        end_after = [_seg for _seg in _seg_list if _seg[4] >= end_time]
         start_before.remove(segment)
         end_after.remove(segment)
         if set(start_before).isdisjoint(end_after):
             seg_list.append(segment)
     return seg_list
-

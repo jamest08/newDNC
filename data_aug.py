@@ -5,10 +5,12 @@ import numpy as np
 from numpy import random
 from numpy.core.defchararray import index
 from numpy.lib.function_base import average
+from scipy.stats import special_ortho_group as SO
 from data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
 
 np.random.seed(0)
 
+np.set_printoptions(threshold=np.inf)
 
 def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speakers_dict,
                              meeting_length):
@@ -108,46 +110,56 @@ def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict):
         augmented_meeting.append(random_dvec)
     return augmented_meeting, random_speaker_seq
 
+def Diaconis(batch):
+    """Randomly samples a rotation matrix and applies to each meeting in a batch of data.
+       Returns the rotated batch.
+    """
+    dimension = 32  # of d-vector
+    rotation_mat = SO.rvs(dimension)
+    for meeting_id in batch:
+        batch[meeting_id] = np.array(batch[meeting_id])
+        # rotate meeting
+        batch[meeting_id] = np.dot(batch[meeting_id], rotation_mat)
+        # normalise variance
+        batch[meeting_id] *= np.sqrt(dimension)
+    return batch
 
-def Diaconis_augmentation():
-    pass
 
-
-# combine? eg Diac on top of speaker randomisation
-# function to produce batch of mixed aug and original?
-# TODO test
 def produce_augmented_batch(averaged_segmented_meetings_dict=None, segmented_speakers_dict=None,
                             global_dvec_dict=None, meeting_dvec_dict = None, batch_size=10,
-                            aug_types=["Diac", "global", "sub"]):
+                            aug_type="global"):
     """Produces a batch of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
-       aug_types is a list which can take values from {"Diac", "global", "meeting", "sub"}
+       aug_type is a string which can be either "global" or "meeting".
        batch_size is number of new meetings to be produced
     """
     # Two dictionaries with key as new meeting_id
     aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
     aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
-    for i in range(batch_size):
+
+    # first do sub-meeting
+    for i in range(batch_size//2):
         aug_meeting_id = "AUG_" + str(i)
-        # randomly choose aug_type from allowed types
-        aug_type = np.random.choice(aug_types)
-        if aug_type == "sub":
-            # randomly choose meeting length
-            meeting_length = np.random.choice(np.arange(100, 1000))
-            aug_meeting, aug_speaker = sub_meeting_augmentation(averaged_segmented_meetings_dict,
-                                                            segmented_speakers_dict, meeting_length)
-        elif aug_type == "global":
-            aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
-                                                                    segmented_speakers_dict)
-        elif aug_type == "meeting":
-            aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
-                                                                     segmented_speakers_dict)
-        elif aug_type == "Diac":
-            aug_meeting, aug_speaker = Diaconis_augmentation()  # TODO fill in arguments
+        # randomly choose meeting length
+        meeting_length = np.random.choice(np.arange(100, 1000))
+        aug_meeting, aug_speaker = sub_meeting_augmentation(averaged_segmented_meetings_dict,
+                                                        segmented_speakers_dict, meeting_length)
         aug_meetings[aug_meeting_id] = aug_meeting
         aug_speakers[aug_meeting_id] = aug_speaker
-    return aug_meetings, aug_speakers
+        
+    if aug_type == "global":
+        for i in range(batch_size//2, batch_size):
+            aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
+                                                                segmented_speakers_dict)
+    elif aug_type == "meeting":
+        for i in range(batch_size//2, batch_size):
+            aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
+                                                                    segmented_speakers_dict)
 
+    # do Diac aug on entire batch
+    diac_aug_meetings = Diaconis(aug_meetings)
+
+    return diac_aug_meetings, aug_speakers
 
 
 def main():
@@ -172,7 +184,7 @@ def main():
                                  segmented_speakers_dict=segmented_speakers_dict,
                                  global_dvec_dict=global_dvec_dict,
                                  batch_size=5,
-                                 aug_types=["global", "sub"])
+                                 aug_type="global")
     print(aug_meetings, aug_speakers)
 
 
