@@ -1,0 +1,268 @@
+{
+    "utts": {
+        "AMI-0EN2002a-012": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:77201",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 0 1 1 1 0 0 2 3 2 0 0 1 1 0 1 3 0 0 2 2 2 3 1 2 1 2 1 2 1 1 1 0 2 0 0 0 1 0 1 1 2 1 1 1 2 1 1 1"
+                }
+            ]
+        },
+        "AMI-0EN2002a-013": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:83633",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 0 0 1 0 2 2 0 0 0 0 1 2 3 1 1 2 3 1 2 2 3 2 3 1 1 1 1 2 2 2 1 1 2 0 2 1 2 1 2 2 1 3 2 2 2 2 3 0 2"
+                }
+            ]
+        },
+        "AMI-0EN2002a-014": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:90065",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 1 0 1 2 2 2 0 0 0 2 0 0 0 3 0 1 0 0 3 0 0 1 1 0 0 1 0 0 1 0 1 0 2 1 0 2 2 0 0 3 1 3 3 3 2 1 0 0"
+                }
+            ]
+        },
+        "AMI-0EN2002a-015": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:96497",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 1 1 0 0 0 2 0 2 1 1 0 1 0 1 2 0 1 2 1 1 1 0 0 1 0 0 2 2 1 1 2 0 0 1 1 0 1 2 0 3 0 3 0 2 3 3 0 3"
+                }
+            ]
+        },
+        "AMI-0EN2002a-016": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:102929",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 0 0 1 2 3 3 0 3 0 1 0 0 1 3 3 0 1 0 0 3 3 1 0 1 2 0 1 2 0 1 1 1 2 1 1 1 0 0 3 2 0 0 0 2 1 1 0 0 0"
+                }
+            ]
+        },
+        "AMI-0EN2002a-017": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002a.ark:109361",
+                    "name": "input1",
+                    "shape": [
+                        38,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        38,
+                        5
+                    ],
+                    "tokenid": "0 0 1 1 1 0 1 0 1 0 1 2 2 1 0 1 1 0 0 1 0 2 0 3 1 0 3 0 3 1 0 1 3 0 0 0 0 0"
+                }
+            ]
+        },
+        "AMI-0EN2002b-000": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:17",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 2 3 3 1 1 3 2 1 0 1 3 1 1 3 1 1 3 3 3 0 2 0 1 1 2 1 2 0 1 0 3 0 0 1 1 0 1 1 1 1 2 1 1 1 1 2 1 2"
+                }
+            ]
+        },
+        "AMI-0EN2002b-001": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:6449",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 0 0 0 1 1 1 0 0 1 1 0 0 0 1 0 1 2 1 2 2 3 2 3 3 3 0 3 1 2 0 3 2 2 2 3 3 0 0 0 2 0 2 0 0 0 3 0 3 0"
+                }
+            ]
+        },
+        "AMI-0EN2002b-002": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:12881",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 1 2 1 2 1 0 3 3 3 3 2 0 2 2 1 2 3 2 0 3 2 1 2 0 0 2 0 3 0 3 1 2 3 0 2 1 0 3 3 2 2 3 0 3 0 3 2 0"
+                }
+            ]
+        },
+        "AMI-0EN2002b-003": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:19313",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 2 0 1 1 2 1 1 0 2 0 0 1 1 0 0 2 0 0 2 1 1 2 3 3 3 1 1 2 2 0 2 2 1 2 3 3 3 2 3 3 2 3 2 2 3 2 2 2"
+                }
+            ]
+        },
+        "AMI-0EN2002b-004": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:25745",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 0 1 1 0 1 2 1 0 1 0 2 1 1 1 1 0 1 1 0 0 1 1 0 1 0 1 1 3 3 3 0 1 0 0 0 0 3 0 3 3 3 3 3 3 0 0 0 3"
+                }
+            ]
+        },
+        "AMI-0EN2002b-005": {
+            "input": [
+                {
+                    "feat": "/home/mifs/jhrt2/DNC/DNC/m50.real/eval/AMI-0EN2002b.ark:32177",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 1 0 1 1 2 2 3 3 3 2 3 2 3 3 3 3 2 3 2 3 2 3 3 3 3 3 3 3 3 3 3 3 2 2 2 3 3 3 2 3 3 2 3 3 3 0 0 3"
+                }
+            ]
+        }
+    }
+}

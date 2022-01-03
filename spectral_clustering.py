@@ -12,7 +12,15 @@ import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 
 from data_loading import build_segment_desc_dict, build_segment_dicts, build_global_dvec_dict, \
+<<<<<<< Updated upstream
                          open_rttm, get_file_paths
+=======
+                         open_rttm, get_file_paths, build_meeting_dvec_dict
+from data_aug import produce_augmented_batch
+
+np.random.seed(0)
+# TODO: sort random seed: use new method
+>>>>>>> Stashed changes
 
 def setup():
     """Get cmds and setup directories."""
@@ -69,31 +77,21 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
     """Loops through all meetings to call spectral clustering function"""
     total_correct = 0
     total_length = 0
-    # with open(args.injson) as _json_file:
-    #     json_file = json.load(_json_file)
     results_dict = {}
-    # for midx, meeting in tqdm(list(json_file["utts"].items())):
     for meeting_id in averaged_segmented_meetings_dict:
-        # meeting_input = meeting["input"]
-        # meeting_output = meeting["output"]
-        # assert len(meeting_input) == 1
-        # assert len(meeting_output) == 1
-        # meeting_input = meeting_input[0]
-        # meeting_output = meeting_output[0]
-        # cur_mat = kaldiio.load_mat(meeting_input["feat"])#(samples,features)
         cur_mat = np.array(averaged_segmented_meetings_dict[meeting_id])
-        # reference = meeting_output["tokenid"].split()
-        # reference = [int(ref) for ref in reference]
         reference = segmented_speakers_dict[meeting_id]
         # assign unique integer to each speaker label
         #print("meeting_id: ", meeting_id, '\n')
         #print("labels: ", reference)
         ref_dict = {label: i for i, label in enumerate(set(reference))}
         reference = [ref_dict[label] for label in reference]
+<<<<<<< Updated upstream
         #print("numbers: ", reference)
         #assert len(reference) == len(cur_mat)
+=======
+>>>>>>> Stashed changes
         if len(reference) == 1:
-            # results_dict[midx] = [0]
             results_dict[meeting_id] = [0]
             continue
         try:
@@ -107,7 +105,6 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
         except:
             print("ERROR:: %s %s" % (str(reference), str(cur_mat)))
             raise
-        # results_dict[midx] = hypothesis
         results_dict[meeting_id] = hypothesis
         #print("hypothesis", hypothesis)
         _correct = permutation_invariant_seqmatch(hypothesis, reference)
@@ -135,6 +132,7 @@ def write_to_rttm(results_dict, dataset):
                 results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
                 results_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 
                                      str(segment[5]) + ' <NA> <NA> ' + str(hypothesis) + ' <NA>\n')
+<<<<<<< Updated upstream
         # for segment_desc in segments_desc_list:
         #     meeting_id = segment_desc[1]
         #     segment_desc[5] = "<NA>"
@@ -151,24 +149,27 @@ def write_to_rttm(results_dict, dataset):
         #     reference_file.write("<NA>")
         #     results_file.write('\n')
         #     reference_file.write('\n')
+=======
+>>>>>>> Stashed changes
 
 
 
 def main():
     """main"""
-    # optimising parameters
-    # dataset = "dev"
-    # averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
-    # args = setup()
-    # for p_percentile in [0.8, 0.85, 0.87, 0.88, 0.89]:
-    #     print(p_percentile)
-    #     args.p_percentile = p_percentile
-    #     results_dict, percentage_correct = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
-
-    dataset = "eval"
+    dataset = "dev"
     args = setup()
     averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
-    results_dict, _ = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
+    global_dvec_dict = build_global_dvec_dict(dataset)
+    meeting_dvec_dict = build_meeting_dvec_dict(dataset)
+    aug_meetings, aug_speakers = produce_augmented_batch(
+                                 averaged_segmented_meetings_dict=averaged_segmented_meetings_dict,
+                                 segmented_speakers_dict=segmented_speakers_dict,
+                                 global_dvec_dict=global_dvec_dict,
+                                 meeting_dvec_dict=meeting_dvec_dict,
+                                 batch_size=20,
+                                 aug_type="global")
+    #results_dict, _ = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
+    results_dict, _ = evaluate_spectralclustering(args, aug_meetings, aug_speakers)
     write_to_rttm(results_dict, dataset)
 
 
