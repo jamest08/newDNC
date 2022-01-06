@@ -141,8 +141,8 @@ def Diaconis(batch):
        Returns the rotated batch.
     """
     dimension = 32  # of d-vector
-    rotation_mat = SO.rvs(dimension)
     for meeting_id in batch:
+        rotation_mat = SO.rvs(dimension)  # now using different rotation matrix for each meeting
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting
         batch[meeting_id] = np.dot(batch[meeting_id], rotation_mat)
@@ -284,90 +284,12 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
         batch =[(aug_meetings_list, aug_speakers_list)]
         yield batch
 
-# def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", meeting_length=50,
-#                             num_batches=int(1e10), gen=False, Diac=True):
-#     """Produces a batch of augmented data for training.
-#        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
-#        aug_type is a string which can be either "global", "meeting" or None.
-#        batch_size is number of new meetings to be produced
-#     """
-#     batch_size = int(batch_size)
-#     # load data
-#     averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
-#     if aug_type == "global":
-#         global_dvec_dict = build_global_dvec_dict(dataset)
-#     elif aug_type == "meeting":
-#         meeting_dvec_dict = build_meeting_dvec_dict(dataset)
-
-#     for iter in range(num_batches):
-#         # Two dictionaries with key as new meeting_id
-#         aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
-#         aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
-
-#         # first do sub-meeting
-#         if aug_type == None:
-#             first_half = batch_size
-#         else:
-#             first_half = batch_size//2
-#         for i in range(first_half):
-#             aug_meeting_id = "AUG_" + str(i)
-#             # randomly choose meeting length
-#             # meeting_length = np.random.choice(np.arange(100, 1000))
-#             aug_meeting, aug_speaker = sub_meeting_augmentation(averaged_segmented_meetings_dict,
-#                                                             segmented_speakers_dict, meeting_length)
-#             aug_meetings[aug_meeting_id] = aug_meeting
-#             aug_speakers[aug_meeting_id] = aug_speaker
-            
-#         # change so does on already augmented meetings?
-#         if aug_type == "global":
-#             for i in range(batch_size//2, batch_size):
-#                 aug_meeting_id = "AUG_" + str(i)
-#                 aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
-#                                                                 segmented_speakers_dict, meeting_length)
-#                 aug_meetings[aug_meeting_id] = aug_meeting
-#                 aug_speakers[aug_meeting_id] = aug_speaker
-
-#         elif aug_type == "meeting":
-#             for i in range(batch_size//2, batch_size):
-#                 aug_meeting_id = "AUG_" + str(i)
-#                 aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
-#                                                                 segmented_speakers_dict, meeting_length)
-#                 aug_meetings[aug_meeting_id] = aug_meeting
-#                 aug_speakers[aug_meeting_id] = aug_speaker
-
-#         # do Diac aug on entire batch
-#         if Diac == True:
-#             aug_meetings = Diaconis(aug_meetings)
-#         else:
-#             for meeting_id in aug_meetings:
-#                 aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
-
-#         if gen == False:  # run only once, not a generator
-#             print('returning')
-#             return aug_meetings, aug_speakers
-#         else:
-#             # convert aug_meetings/aug_speakers to batch format
-#             aug_meetings_list = []
-#             aug_speakers_list = []
-#             for meeting_id in aug_meetings:
-#                 aug_meetings_list.append(aug_meetings[meeting_id])
-
-#                 # convert speaker labels to numbers
-#                 labels = aug_speakers[meeting_id]
-#                 spk_dict = {label: i for i, label in enumerate(set(labels))}
-#                 labels = [spk_dict[label] for label in labels]
-#                 aug_speakers_list.append(np.array(labels))
-
-#             batch =[(aug_meetings_list, aug_speakers_list)]
-#             yield batch
-
-
 
 def write_to_json(meetings, speakers, dataset):
     """Write batch to JSON file."""
     json_dict = {}
     json_dict["utts"] = {}
-    with open("/scratch/jhrt2/aug_data/%s.scp" % dataset) as _scp:
+    with open("/data/mifs_scratch/jhrt2/aug_data_meeting/%s.scp" % dataset) as _scp:
         meeting_level_scp = {eachline.split()[0]:eachline.split()[1].rstrip()
                                 for eachline in _scp.readlines()}
     for meeting_id, meeting in meetings.items():
@@ -387,14 +309,14 @@ def write_to_json(meetings, speakers, dataset):
         json_dict["utts"][meeting_id] = {}
         json_dict["utts"][meeting_id]["input"] = [input_dict]
         json_dict["utts"][meeting_id]["output"] = [output_dict]
-    with open("/scratch/jhrt2/aug_data/%s.json" % dataset, 'wb') as json_file:
+    with open("/data/mifs_scratch/jhrt2/aug_data_meeting/%s.json" % dataset, 'wb') as json_file:
         json_file.write(json.dumps(json_dict, indent=4, sort_keys=True).encode('utf_8'))
 
 
 def write_to_ark(meetings, dataset):
     """Write each meeting to a separate ark file."""
     cwd = os.getcwd()
-    with kaldiio.WriteHelper('ark,scp:/scratch/jhrt2/aug_data/%s.ark,/scratch/jhrt2/aug_data/%s.scp' % (dataset, dataset)) as writer:
+    with kaldiio.WriteHelper('ark,scp:/data/mifs_scratch/jhrt2/aug_data_meeting/%s.ark,/data/mifs_scratch/jhrt2/aug_data_meeting/%s.scp' % (dataset, dataset)) as writer:
         for meeting_id in meetings:
             writer(meeting_id, meetings[meeting_id])
 
@@ -405,8 +327,8 @@ def main():
 
     aug_meetings, aug_speakers = produce_augmented_batch_function(dataset=dataset,
                                                         batch_size=735000,
-                                                        aug_type=None,
-                                                        Diac=True)
+                                                        aug_type="meeting",
+                                                        Diac=False)
     write_to_ark(aug_meetings, dataset)
     write_to_json(aug_meetings, aug_speakers, dataset)
 
