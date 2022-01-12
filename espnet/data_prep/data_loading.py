@@ -61,17 +61,19 @@ def build_global_dvec_dict(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-            #     start_index += 100
-            #     end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index]
-            averaged_segment = np.mean(segment, axis=0)
-            averaged_segment = averaged_segment/np.linalg.norm(averaged_segment)
+            # split segments longer than 2s to give more training examples
+            num_subsegments = max(1, len(segment) // 100)
+            subsegments = np.array_split(segment, num_subsegments)
             speaker = segment_desc[2]
-            if speaker not in global_dvec_dict:
-                global_dvec_dict[speaker] = [averaged_segment]
-            else:
-                global_dvec_dict[speaker].append(averaged_segment)
+            for subsegment in subsegments:
+                averaged_subsegment = np.mean(subsegment, axis=0)
+                averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)
+                if speaker not in global_dvec_dict:
+                    global_dvec_dict[speaker] = [averaged_subsegment]
+                else:
+                    global_dvec_dict[speaker].append(averaged_subsegment)
+
     return global_dvec_dict
 
 
@@ -92,17 +94,18 @@ def build_meeting_dvec_dict(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-            #     start_index += 100
-            #     end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index]
-            averaged_segment = np.mean(segment, axis=0)
-            averaged_segment = averaged_segment/np.linalg.norm(averaged_segment)
+            # split segments longer than 2s to give more training examples
+            num_subsegments = max(1, len(segment) // 100)
+            subsegments = np.array_split(segment, num_subsegments)
             speaker = segment_desc[2]
-            if speaker not in inner_dvec_dict:
-                inner_dvec_dict[speaker] = [averaged_segment]
-            else:
-                inner_dvec_dict[speaker].append(averaged_segment)
+            for subsegment in subsegments:
+                averaged_subsegment = np.mean(subsegment, axis=0)
+                averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)
+                if speaker not in inner_dvec_dict:
+                    inner_dvec_dict[speaker] = [averaged_subsegment]
+                else:
+                    inner_dvec_dict[speaker].append(averaged_subsegment)
         meeting_dvec_dict[meeting_id] = inner_dvec_dict
     return meeting_dvec_dict
 
@@ -174,3 +177,5 @@ def filter_encompassed_segments(_seg_list):
         if set(start_before).isdisjoint(end_after):
             seg_list.append(segment)
     return seg_list
+
+build_meeting_dvec_dict('train')
