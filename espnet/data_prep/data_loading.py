@@ -46,7 +46,7 @@ def open_scp(scp_path):
     return meeting_path_lists
 
 
-def build_global_dvec_dict(dataset):
+def build_global_dvec_dict(dataset, split=False):
     """Key is speaker, value is list of all averaged d_vectors for that speaker.
     D-vectors from across all meetings
     """
@@ -62,10 +62,13 @@ def build_global_dvec_dict(dataset):
             start_index = segment_desc[0]
             end_index = segment_desc[1]
             segment = meeting_dvectors_array[start_index:end_index]
-            # split segments longer than 2s to give more training examples
-            num_subsegments = max(1, len(segment) // 100)
-            subsegments = np.array_split(segment, num_subsegments)
             speaker = segment_desc[2]
+            if split:
+                # split segments longer than 2s to give more training examples
+                num_subsegments = max(1, len(segment) // 100)
+                subsegments = np.array_split(segment, num_subsegments)
+            else:
+                subsegments = [segment]
             for subsegment in subsegments:
                 averaged_subsegment = np.mean(subsegment, axis=0)
                 averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)
@@ -77,7 +80,7 @@ def build_global_dvec_dict(dataset):
     return global_dvec_dict
 
 
-def build_meeting_dvec_dict(dataset):
+def build_meeting_dvec_dict(dataset, split=False):
     """Build meeting-level d-vector dictionary.
     Key is meeting id, value is another dictionary where
     key is speaker and value is list of dvectors for that speaker and meeting.
@@ -95,10 +98,13 @@ def build_meeting_dvec_dict(dataset):
             start_index = segment_desc[0]
             end_index = segment_desc[1]
             segment = meeting_dvectors_array[start_index:end_index]
-            # split segments longer than 2s to give more training examples
-            num_subsegments = max(1, len(segment) // 100)
-            subsegments = np.array_split(segment, num_subsegments)
             speaker = segment_desc[2]
+            if split:
+                # split segments longer than 2s to give more training examples
+                num_subsegments = max(1, len(segment) // 100)
+                subsegments = np.array_split(segment, num_subsegments)
+            else:
+                subsegments = [segment]
             for subsegment in subsegments:
                 averaged_subsegment = np.mean(subsegment, axis=0)
                 averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)

@@ -144,7 +144,6 @@ def Diaconis(batch):
     for meeting_id in batch:
         rotation_mat = SO.rvs(dimension)  # now using different rotation matrix for each meeting
         batch[meeting_id] = np.array(batch[meeting_id])
-        print(np.linalg.norm(batch[meeting_id][-1]))
         # rotate meeting
         batch[meeting_id] = np.dot(batch[meeting_id], rotation_mat)
         # normalise variance
@@ -322,15 +321,15 @@ def write_to_ark(meetings, dataset, aug_type):
 def main():
     """Main"""
     dataset = "train"
-    aug_type = "global"
+    aug_type = "meeting"
     Diac=True
 
     aug_meetings, aug_speakers = produce_augmented_batch_function(dataset=dataset,
                                                         batch_size=735000,
                                                         aug_type=aug_type,
                                                         Diac=Diac)
-    #write_to_ark(aug_meetings, dataset, aug_type)
-    #write_to_json(aug_meetings, aug_speakers, dataset, aug_type)
+    write_to_ark(aug_meetings, dataset, aug_type)
+    write_to_json(aug_meetings, aug_speakers, dataset, aug_type)
 
     # train_iter = produce_augmented_batch(
     #                             dataset="dev",
