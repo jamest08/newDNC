@@ -19,9 +19,9 @@ from scipy.stats import special_ortho_group as SO
 # from data_prep.data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
 from data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
 
-np.random.seed(0)
+#np.random.seed(0)
 
-# np.set_printoptions(threshold=np.inf)
+np.set_printoptions(threshold=np.inf)
 
 def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speakers_dict,
                              meeting_length=50):
@@ -30,6 +30,7 @@ def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speaker
        meeting_length is length of new meeting in number of segments.
     """
     # ensure chosen meeting is longer than required sub-sample length (meeting_length)
+    # TODO: this doesn't need to be repeated on each call.  Not urgent as not actually too slow
     valid_meeting_ids = np.array(list(averaged_segmented_meetings_dict.keys()))
     indexes_to_remove = []
     for i in range(len(valid_meeting_ids)):
@@ -51,7 +52,6 @@ def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speaker
     return augmented_meeting, augmented_speakers
     
 
-# normalise variance?
 def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length):
     """Global input vectors randomisation.
        Randomly sample a sequence of speaker labels.  For each label assign a speaker identity from
@@ -88,7 +88,7 @@ def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meet
         augmented_meeting.append(random_dvec)
     return augmented_meeting, random_speaker_seq
 
-# normalise variance?
+
 def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, meeting_length):
     """Meeting input vectors randomisation.
        Randomly sample a sequence of speaker labels.  Randomly choose a meeting with at least that
@@ -142,7 +142,7 @@ def Diaconis(batch):
     """
     dimension = 32  # of d-vector
     for meeting_id in batch:
-        rotation_mat = SO.rvs(dimension)  # now using different rotation matrix for each meeting
+        rotation_mat = SO.rvs(dimension)  # use different rotation matrix for each meeting
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting
         batch[meeting_id] = np.dot(batch[meeting_id], rotation_mat)
@@ -151,8 +151,8 @@ def Diaconis(batch):
     return batch
 
 
-def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="global", meeting_length=50,
-                                        Diac=True):  # for testing only
+def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="global",
+                                        meeting_length=50, Diac=True):  # for testing only
     """Produces a batch of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
        aug_type is a string which can be either "global", "meeting" or "None".
@@ -172,10 +172,9 @@ def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="glo
 
     # if only sub-meeting
     if aug_type == "None":
+        # TODO: move for loops to function so don't have to repeat some lines
         for i in range(batch_size):
             aug_meeting_id = "AUG_" + str(i)
-            # randomly choose meeting length
-            # meeting_length = np.random.choice(np.arange(100, 1000))
             aug_meeting, aug_speaker = sub_meeting_augmentation(averaged_segmented_meetings_dict,
                                                             segmented_speakers_dict, meeting_length)
             aug_meetings[aug_meeting_id] = aug_meeting
@@ -211,7 +210,7 @@ def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="glo
 
 
 def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", meeting_length=50,
-                            num_batches=int(1e10), gen=True, Diac=True):  # generator version as used in on-the-fly
+        num_batches=int(1e10), gen=True, Diac=True):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
        aug_type is a string which can be either "global", "meeting" or "None".
@@ -234,8 +233,7 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
         if aug_type == "None":
             for i in range(batch_size):
                 aug_meeting_id = "AUG_" + str(i)
-                # randomly choose meeting length
-                # meeting_length = np.random.choice(np.arange(100, 1000))
+                # TODO: move for loops to function so don't have to repeat some lines
                 aug_meeting, aug_speaker = sub_meeting_augmentation(averaged_segmented_meetings_dict,
                                                                 segmented_speakers_dict, meeting_length)
                 aug_meetings[aug_meeting_id] = aug_meeting
@@ -321,13 +319,14 @@ def write_to_ark(meetings, dataset, aug_type):
 def main():
     """Main"""
     dataset = "train"
-    aug_type = "meeting"
-    Diac=True
+    aug_type = "None"
+    Diac = False
 
     aug_meetings, aug_speakers = produce_augmented_batch_function(dataset=dataset,
                                                         batch_size=735000,
                                                         aug_type=aug_type,
                                                         Diac=Diac)
+
     write_to_ark(aug_meetings, dataset, aug_type)
     write_to_json(aug_meetings, aug_speakers, dataset, aug_type)
 

@@ -458,7 +458,7 @@ def train(args):
     # Evaluate the model with the test dataset for each epoch
     trainer.extend(CustomEvaluator(model, valid_iter, reporter, converter, device))
 
-    # TODO may need to add this back - is it for model or just for reocrding results
+    # TODO may need to add this back - is it for model or just for recording results
 
     # # Save attention weight each epoch
     # if args.num_save_attention > 0 and args.mtlalpha != 1.0:

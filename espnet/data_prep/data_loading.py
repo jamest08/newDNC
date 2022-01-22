@@ -183,5 +183,3 @@ def filter_encompassed_segments(_seg_list):
         if set(start_before).isdisjoint(end_after):
             seg_list.append(segment)
     return seg_list
-
-build_meeting_dvec_dict('train')
