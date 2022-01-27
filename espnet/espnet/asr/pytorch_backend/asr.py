@@ -12,12 +12,10 @@ import math
 import os
 import sys
 
-from chainer.datasets import TransformDataset
 from chainer import reporter as reporter_module
 from chainer import training
 from chainer.training import extensions
 import numpy as np
-from tensorboardX import SummaryWriter
 import torch
 
 from espnet.asr.asr_utils import adadelta_eps_decay
@@ -29,7 +27,6 @@ from espnet.asr.asr_utils import restore_snapshot
 from espnet.asr.asr_utils import snapshot_object
 from espnet.asr.asr_utils import torch_load
 from espnet.asr.asr_utils import torch_resume
-from espnet.asr.asr_utils import torch_snapshot
 import espnet.lm.pytorch_backend.extlm as extlm_pytorch
 import espnet.lm.pytorch_backend.lm as lm_pytorch
 from espnet.nets.asr_interface import ASRInterface
@@ -43,11 +40,7 @@ from espnet.utils.cli_writers import file_writer_helper
 from espnet.utils.deterministic_utils import set_deterministic_pytorch
 from espnet.utils.dynamic_import import dynamic_import
 from espnet.utils.io_utils import LoadInputsAndTargets
-from espnet.utils.training.batchfy import make_batchset
 from espnet.utils.training.iterators import ShufflingEnabler
-from espnet.utils.training.iterators import ToggleableShufflingMultiprocessIterator
-from espnet.utils.training.iterators import ToggleableShufflingSerialIterator
-from espnet.utils.training.tensorboard_logger import TensorboardLogger
 from espnet.utils.training.train_utils import check_early_stop
 from espnet.utils.training.train_utils import set_early_stop
 #from chainer.iterators.on_the_fly_iterator import OnTheFlyIterator   #  file still exists here, but also moved to espnet
@@ -110,7 +103,7 @@ class CustomEvaluator(extensions.Evaluator):
 
         self.model.eval()
         with torch.no_grad():
-            for iter in range(10):
+            for _ in range(10):
                 batch = next(it)
                 observation = {}
                 with reporter_module.report_scope(observation):

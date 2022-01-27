@@ -4,7 +4,6 @@ import kaldiio
 import numpy as np
 from collections import defaultdict
 
-from numpy.lib.function_base import average
 
 def open_rttm(rttm_path):
     """Open rttm file containing segmentation data.

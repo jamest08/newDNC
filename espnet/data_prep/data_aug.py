@@ -1,12 +1,9 @@
 """Augment data with three different techniques"""
 
-import kaldiio
-import numpy as np
 import json
 import os
-from numpy import random
-from numpy.core.defchararray import index
-from numpy.lib.function_base import average
+import kaldiio
+import numpy as np
 from scipy.stats import special_ortho_group as SO
 
 try:  # use this one for generator
@@ -49,7 +46,7 @@ def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speaker
     augmented_meeting = random_meeting[random_start_idx:end_idx+1]
     augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
     return augmented_meeting, augmented_speakers
-    
+
 
 def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length=50):
     """Global input vectors randomisation.
@@ -201,7 +198,7 @@ def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="glo
                                                             segmented_speakers_dict, meeting_length)
             aug_meetings[aug_meeting_id] = aug_meeting
             aug_speakers[aug_meeting_id] = aug_speaker
-        
+ 
     elif aug_type == "global":
         for i in range(batch_size):
             aug_meeting_id = "AUG_" + str(i)
@@ -252,7 +249,7 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
     elif aug_type == "meeting":
         meeting_dvec_dict = build_meeting_dvec_dict(dataset)
 
-    for iter in range(num_batches):
+    for _ in range(num_batches):
         # Two dictionaries with key as new meeting_id
         aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
         aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
@@ -271,7 +268,7 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
             for i in range(batch_size):
                 aug_meeting_id = "AUG_" + str(i)
                 aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
-                                                                segmented_speakers_dict, meeting_length)
+                                                       segmented_speakers_dict, meeting_length)
                 aug_meetings[aug_meeting_id] = aug_meeting
                 aug_speakers[aug_meeting_id] = aug_speaker
 
@@ -279,7 +276,7 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
             for i in range(batch_size):
                 aug_meeting_id = "AUG_" + str(i)
                 aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
-                                                                segmented_speakers_dict, meeting_length)
+                                                          segmented_speakers_dict, meeting_length)
                 aug_meetings[aug_meeting_id] = aug_meeting
                 aug_speakers[aug_meeting_id] = aug_speaker
 
@@ -310,12 +307,12 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
 
 def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging only
     """Write batch to JSON file.
-    
+
     :param: dict meetings[meeting_id] = List[dvectors] (lists of segments for each meeting)
     :param: dict speakers[meeting_id] = List[str]  (speaker label sequences)
     :param: str dataset: "train", "dev" or "eval"
     :param: str aug_type: "None", "meeting" or "global"
-    """  
+    """ 
     json_dict = {}
     json_dict["utts"] = {}
     with open("/data/mifs_scratch/jhrt2/aug_data_%s/%s.scp" % (aug_type, dataset)) as _scp:
@@ -344,13 +341,13 @@ def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging only
 
 def write_to_ark(meetings, dataset, aug_type):  # for debugging only
     """Write each meeting to a separate ark file.
-    
+
     :param: dict meetings[meeting_id] = List[dvectors] (lists of segments for each meeting)
     :param: str dataset: "train", "dev" or "eval"
     :param: str aug_type: "None", "meeting" or "global"
     """
-    cwd = os.getcwd()
-    with kaldiio.WriteHelper('ark,scp:/data/mifs_scratch/jhrt2/aug_data_%s/%s.ark,/data/mifs_scratch/jhrt2/aug_data_%s/%s.scp' % (aug_type, dataset, aug_type, dataset)) as writer:
+    with kaldiio.WriteHelper('ark,scp:/data/mifs_scratch/jhrt2/aug_data_%s/%s.ark,/data/mifs_scratch/jhrt2/aug_data_%s/%s.scp' \
+         % (aug_type, dataset, aug_type, dataset)) as writer:
         for meeting_id in meetings:
             writer(meeting_id, meetings[meeting_id])
 
