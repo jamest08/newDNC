@@ -50,7 +50,8 @@ from espnet.utils.training.iterators import ToggleableShufflingSerialIterator
 from espnet.utils.training.tensorboard_logger import TensorboardLogger
 from espnet.utils.training.train_utils import check_early_stop
 from espnet.utils.training.train_utils import set_early_stop
-from chainer.iterators.on_the_fly_iterator import OnTheFlyIterator
+#from chainer.iterators.on_the_fly_iterator import OnTheFlyIterator   #  file still exists here, but also moved to espnet
+from espnet.asr.pytorch_backend.on_the_fly_iterator import OnTheFlyIterator
 
 import importlib.util
   
@@ -416,16 +417,10 @@ def train(args):
     valid_batch_size = 10  # is this right?
     train_batch_size = 500
 
-    # load_cv = LoadInputsAndTargets(
-    #     mode='asr', load_output=True, preprocess_conf=args.preprocess_conf,
-    #     rotate=False, preprocess_args={'train': False}  # Switch the mode of preprocessing
-    # )
-
     train_generator = produce_augmented_batch(
                         dataset="train",
                         batch_size=train_batch_size,
                         aug_type="global",
-                        gen=True,
                         Diac=True)
     train_iter = OnTheFlyIterator(train_generator, train_batch_size)
     train_iter = {'main': train_iter}
@@ -434,8 +429,7 @@ def train(args):
     valid_generator = produce_augmented_batch(
                         dataset="dev",
                         batch_size=valid_batch_size,
-                        aug_type=None,
-                        gen=True,
+                        aug_type="None",
                         Diac=False)
     valid_iter = OnTheFlyIterator(valid_generator, valid_batch_size, repeat=False, shuffle=False)
     valid_iter = {'main': valid_iter}
@@ -458,24 +452,7 @@ def train(args):
     # Evaluate the model with the test dataset for each epoch
     trainer.extend(CustomEvaluator(model, valid_iter, reporter, converter, device))
 
-    # TODO may need to add this back - is it for model or just for recording results
-
-    # # Save attention weight each epoch
-    # if args.num_save_attention > 0 and args.mtlalpha != 1.0:
-    #     data = sorted(list(valid_json.items())[:args.num_save_attention],
-    #                   key=lambda x: int(x[1]['input'][0]['shape'][1]), reverse=True)
-    #     if hasattr(model, "module"):
-    #         att_vis_fn = model.module.calculate_all_attentions
-    #         plot_class = model.module.attention_plot_class
-    #     else:
-    #         att_vis_fn = model.calculate_all_attentions
-    #         plot_class = model.attention_plot_class
-    #     att_reporter = plot_class(
-    #         att_vis_fn, data, args.outdir + "/att_ws",
-    #         converter=converter, transform=load_cv, device=device)
-    #     trainer.extend(att_reporter, trigger=(1, 'epoch'))
-    # else:
-    #     att_reporter = None
+    # IMPORTANT have removed code recording snapshot
 
     # Make a plot for training and validation values
     trainer.extend(extensions.PlotReport(['main/loss', 'validation/main/loss',
@@ -494,8 +471,7 @@ def train(args):
         trainer.extend(snapshot_object(model, 'model.acc.best'),
                        trigger=training.triggers.MaxValueTrigger('validation/main/acc'))
 
-    # # save snapshot which contains model and optimizer states
-    # trainer.extend(torch_snapshot(), trigger=(1, 'epoch'))
+    # IMPORTANT: REMOVED THIS LINE save snapshot which contains model and optimizer states
 
     # epsilon decay in the optimizer
     if args.opt == 'adadelta':
@@ -539,9 +515,6 @@ def train(args):
     trainer.extend(extensions.ProgressBar(update_interval=REPORT_INTERVAL))
     set_early_stop(trainer, args)
 
-    # if args.tensorboard_dir is not None and args.tensorboard_dir != "":
-    #     writer = SummaryWriter(args.tensorboard_dir)
-    #     trainer.extend(TensorboardLogger(writer, att_reporter), trigger=(REPORT_INTERVAL, 'iteration'))
     # Run the training
     trainer.run()
     check_early_stop(trainer, args.epochs)

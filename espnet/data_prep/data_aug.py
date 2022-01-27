@@ -1,6 +1,5 @@
 """Augment data with three different techniques"""
 
-# change so only produces meetings of length 50?
 import kaldiio
 import numpy as np
 import json
@@ -10,24 +9,24 @@ from numpy.core.defchararray import index
 from numpy.lib.function_base import average
 from scipy.stats import special_ortho_group as SO
 
-# import importlib.util
-# spec=importlib.util.spec_from_file_location("data_loading","/home/mifs/jhrt2/newDNC/data_loading.py")
-# data_loading = importlib.util.module_from_spec(spec)
-# spec.loader.exec_module(data_loading)
+try:  # use this one for generator
+    from data_prep.data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
+except:  # use this for debugging
+    from data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
 
-# use this one for generator
-# from data_prep.data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
-from data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
-
-#np.random.seed(0)
-
-np.set_printoptions(threshold=np.inf)
 
 def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speakers_dict,
                              meeting_length=50):
     """Sub-sequence randomisation.
        Randomly chooses a real meeting and samples a sub_meeting at segment boundaries.
-       meeting_length is length of new meeting in number of segments.
+
+       :param: dict averaged_segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
+            for each meeting)
+       :param: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for
+            each meeting)
+       :param: int meeting_length: desired length of augmented meeting in number of segments
+       :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
+       :return: List[str] augmented_speaker: the new, augmented sequence of speaker labels
     """
     # ensure chosen meeting is longer than required sub-sample length (meeting_length)
     # TODO: this doesn't need to be repeated on each call.  Not urgent as not actually too slow
@@ -52,10 +51,17 @@ def sub_meeting_augmentation(averaged_segmented_meetings_dict, segmented_speaker
     return augmented_meeting, augmented_speakers
     
 
-def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length):
+def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length=50):
     """Global input vectors randomisation.
-       Randomly sample a sequence of speaker labels.  For each label assign a speaker identity from
-       any meeting.  For each segment in the sequence, sample a random d-vector from that speaker.
+        Randomly sample a sequence of speaker labels.  For each label assign a speaker identity from
+        any meeting.  For each segment in the sequence, sample a random d-vector from that speaker.
+
+        :param: dict global_dvec_dict[speaker_label] = List[dvector] where dvector is 32-D np array
+        :param: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for
+            each meeting)
+        :param: int meeting_length: desired length of augmented meeting in number of segments
+        :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
+        :return: List[str] random_speaker_seq: the new, augmented sequence of speaker labels
     """
     # each entry in array is list of speakers in a meeting
     speaker_labels_array = np.array(list(segmented_speakers_dict.values()), dtype=list)
@@ -91,9 +97,16 @@ def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meet
 
 def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, meeting_length):
     """Meeting input vectors randomisation.
-       Randomly sample a sequence of speaker labels.  Randomly choose a meeting with at least that
-       number of speakers.  For each label assign a speaker identity from the chosen meeting.  For
-       each segment in the sequence, sample a random d-vector from that speaker from that meeting.
+        Randomly sample a sequence of speaker labels.  Randomly choose a meeting with at least that
+        number of speakers.  For each label assign a speaker identity from the chosen meeting.  For
+        each segment in the sequence, sample a random d-vector from that speaker from that meeting.
+
+        :param: dict meeting_dvec_dict[meeting_id] = {speaker_label: List[dvector]}
+        :param: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for
+            each meeting)
+        :param: int meeting_length: desired length of augmented meeting in number of segments
+        :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
+        :return: List[str] random_speaker_seq: the new, augmented sequence of speaker labels
     """
     # each entry in array is list of speakers in a meeting
     speaker_labels_array = np.array(list(segmented_speakers_dict.values()), dtype=list)
@@ -139,6 +152,9 @@ def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, me
 def Diaconis(batch):
     """Randomly samples a rotation matrix and applies to each meeting in a batch of data.
        Returns the rotated batch.
+
+       :param: dict batch[meeting_id] = List[dvectors] (dictionary of meetings, each a list of segs)
+       :return: dict batch[meeting_id] = List[dvectors] (as above with but each meeting rotated)
     """
     dimension = 32  # of d-vector
     for meeting_id in batch:
@@ -152,11 +168,17 @@ def Diaconis(batch):
 
 
 def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="global",
-                                        meeting_length=50, Diac=True):  # for testing only
+                                        meeting_length=50, Diac=True):  # for debugging only
     """Produces a batch of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
-       aug_type is a string which can be either "global", "meeting" or "None".
-       batch_size is number of new meetings to be produced
+
+       :param: str dataset: "train", "dev", or "eval"
+       :param: int batch_size: number of augmented meetings to produce
+       :param: str aug_type: "global", "meeting" or "None" (randomisation type)
+       :param: int meeting_length: number of segments in each augmented meeting
+       :param: Bool Diac: performs Diaconis augmentation on top of batch if True
+       :return: dict aug_meetings[meeting_id] = List[dvectors]: batch of augmented meetings
+       :return: dict aug_speakers[meeting_id] = List[str]: speaker labels sequences
     """
     batch_size = int(batch_size)
     # load data
@@ -210,11 +232,17 @@ def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="glo
 
 
 def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", meeting_length=50,
-        num_batches=int(1e10), gen=True, Diac=True):  # generator version as used in on-the-fly
+        num_batches=int(1e10), Diac=True):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
-       aug_type is a string which can be either "global", "meeting" or "None".
-       batch_size is number of new meetings to be produced
+
+       :param: str dataset: "train", "dev", or "eval"
+       :param: int batch_size: number of augmented meetings to produce
+       :param: str aug_type: "global", "meeting" or "None" (randomisation type)
+       :param: int meeting_length: number of segments in each augmented meeting
+       :param: Bool Diac: performs Diaconis augmentation on top of batch if True
+       :yield: List[Tuple[List[List[dvectors]], List[List[str]]]]  batch of augmented meetings and 
+        speaker label sequences in format required by ESPNet
     """
     batch_size = int(batch_size)
     # load data
@@ -239,7 +267,7 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
                 aug_meetings[aug_meeting_id] = aug_meeting
                 aug_speakers[aug_meeting_id] = aug_speaker
             
-        if aug_type == "global":
+        elif aug_type == "global":
             for i in range(batch_size):
                 aug_meeting_id = "AUG_" + str(i)
                 aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
@@ -280,8 +308,14 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
         yield batch
 
 
-def write_to_json(meetings, speakers, dataset, aug_type):
-    """Write batch to JSON file."""
+def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging only
+    """Write batch to JSON file.
+    
+    :param: dict meetings[meeting_id] = List[dvectors] (lists of segments for each meeting)
+    :param: dict speakers[meeting_id] = List[str]  (speaker label sequences)
+    :param: str dataset: "train", "dev" or "eval"
+    :param: str aug_type: "None", "meeting" or "global"
+    """  
     json_dict = {}
     json_dict["utts"] = {}
     with open("/data/mifs_scratch/jhrt2/aug_data_%s/%s.scp" % (aug_type, dataset)) as _scp:
@@ -308,8 +342,13 @@ def write_to_json(meetings, speakers, dataset, aug_type):
         json_file.write(json.dumps(json_dict, indent=4, sort_keys=True).encode('utf_8'))
 
 
-def write_to_ark(meetings, dataset, aug_type):
-    """Write each meeting to a separate ark file."""
+def write_to_ark(meetings, dataset, aug_type):  # for debugging only
+    """Write each meeting to a separate ark file.
+    
+    :param: dict meetings[meeting_id] = List[dvectors] (lists of segments for each meeting)
+    :param: str dataset: "train", "dev" or "eval"
+    :param: str aug_type: "None", "meeting" or "global"
+    """
     cwd = os.getcwd()
     with kaldiio.WriteHelper('ark,scp:/data/mifs_scratch/jhrt2/aug_data_%s/%s.ark,/data/mifs_scratch/jhrt2/aug_data_%s/%s.scp' % (aug_type, dataset, aug_type, dataset)) as writer:
         for meeting_id in meetings:
@@ -318,6 +357,8 @@ def write_to_ark(meetings, dataset, aug_type):
 
 def main():
     """Main"""
+
+    # example for producing a batch for debugging.  Delete if using as generator.
     dataset = "train"
     aug_type = "None"
     Diac = False
@@ -329,15 +370,6 @@ def main():
 
     write_to_ark(aug_meetings, dataset, aug_type)
     write_to_json(aug_meetings, aug_speakers, dataset, aug_type)
-
-    # train_iter = produce_augmented_batch(
-    #                             dataset="dev",
-    #                             batch_size=25,
-    #                             aug_type="global",
-    #                             gen=True,
-    #                             Diac=True,
-    #                             num_batches=5)
-    # print(train_iter.next())
 
 if __name__ == '__main__':
     main()

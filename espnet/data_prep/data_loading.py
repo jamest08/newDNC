@@ -6,10 +6,12 @@ from collections import defaultdict
 
 from numpy.lib.function_base import average
 
-# np.set_printoptions(threshold=np.inf)
-
 def open_rttm(rttm_path):
-    """Open rttm file containing segmentation data and return as numpy array."""
+    """Open rttm file containing segmentation data.
+
+    :param: str rttm_path: path to rttm file
+    :return: List[List[str]] segments_desc_list: list of each line of the file as a lists of strings
+    """
     with open(rttm_path, "r") as rttm_file:
         segments_desc_list = [(line.strip()).split() for line in rttm_file]
     return segments_desc_list
@@ -18,7 +20,8 @@ def open_rttm(rttm_path):
 def build_segment_desc_dict(rttm_path):
     """Build dictionary segment_desc_dict.
 
-    Key is meeting name, value is numpy array of tuples (start_index, end_index, speaker_label,
+    :param: str rttm_path: path to rttm file
+    :return: dict segment_desc_dict[meeting_id] =  np.array(start_index, end_index, speaker_label,
     start_time, end_time, duration)
     """
     segment_desc_dict = defaultdict(list)
@@ -39,17 +42,24 @@ def build_segment_desc_dict(rttm_path):
 
 
 def open_scp(scp_path):
-    """Open scp file containing paths to meeting d-vectors and return numpy array."""
+    """Open scp file containing paths to meeting d-vectors and return numpy array.
+
+    :param: str scp_path: path to scp file
+    :return: List[List[str]] meeting_path_lists: List of Lists [meeting_id, path_to_ark_file]
+    """
     with open(scp_path, "r") as scp_file:
-    # create list of lists [meeting_id, path_to_ark]
         meeting_path_lists = [(line.strip()).split() for line in scp_file]
     return meeting_path_lists
 
 
 def build_global_dvec_dict(dataset, split=False):
-    """Key is speaker, value is list of all averaged d_vectors for that speaker.
-    D-vectors from across all meetings
+    """Builds global d-vector dictionary (d-vectors from across all meetings)
+    
+    :param: str dataset: "train", "dev", or "eval"
+    :param: Bool split: splits segments longer than 2s if True
+    :return: dict global_dvec_dict[speaker_label] = List[dvector] where dvector is 32-D np array
     """
+
     scp_path, rttm_path = get_file_paths(dataset)
     global_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
@@ -81,9 +91,11 @@ def build_global_dvec_dict(dataset, split=False):
 
 
 def build_meeting_dvec_dict(dataset, split=False):
-    """Build meeting-level d-vector dictionary.
-    Key is meeting id, value is another dictionary where
-    key is speaker and value is list of dvectors for that speaker and meeting.
+    """Build meeting-level d-vector dictionary (dictionary of dictionaries, one per meeting).
+    
+    :param: str dataset: "train", "dev", or "eval"
+    :param: Bool split: splits segments longer than 2s if True
+    :return: dict meeting_dvec_dict[meeting_id] = {speaker_label: List[dvector]}
     """
     scp_path, rttm_path = get_file_paths(dataset)
     meeting_dvec_dict = {}
@@ -118,9 +130,12 @@ def build_meeting_dvec_dict(dataset, split=False):
 
 def build_segment_dicts(dataset):
     """Build averaged_segmented_meetings_dict and segmented_speakers_dict (labels).
-    averaged_segmented_meetings_dict: Key is meeting_id, value is array of segments.
-                                      Each segment is 1 d-vector.
-    segmented_speakers_dict: Key is meeting_id, value is array of speakers aligning with segments.
+
+    :param: str dataset: "train", "dev", or "eval"
+    :return: dict averaged_segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
+            for each meeting)
+    :return: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for each
+            meeting)
     """
     scp_path, rttm_path = get_file_paths(dataset)
     # create two dictionaries with key as meeting_id:
@@ -137,9 +152,6 @@ def build_segment_dicts(dataset):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            # if end_index - start_index > 400:  # if longer than 4s, truncate by 2s (1s each side)
-            #     start_index += 100
-            #     end_index -= 100
             segment = meeting_dvectors_array[start_index:end_index]
             averaged_segment = np.mean(segment, axis=0)
             averaged_segment = averaged_segment/np.linalg.norm(averaged_segment)
@@ -170,7 +182,12 @@ def get_file_paths(dataset):
 
 
 def filter_encompassed_segments(_seg_list):
-    """Remove segments completely contained within another one based on time (not indices)."""
+    """Remove segments completely contained within another one based on time (not indices).
+    Takes segment_desc_list from build_segment_desc_dict()
+
+    :param: _seg_list np.array(segment_information)
+    :return: seg_list np.array(segment_information)
+    """
     _seg_list.sort(key=lambda tup: tup[3])
     seg_list = []
     for segment in _seg_list:
