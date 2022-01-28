@@ -160,7 +160,6 @@ class CustomUpdater(training.StandardUpdater):
 
         # Get the next batch ( a list of json files)
         batch = train_iter.next()
-        print('batch')
         
         self.iteration += 1
         x = self.converter(batch, self.device)
@@ -411,6 +410,7 @@ def train(args):
     train_batch_size = 500
 
     train_generator = produce_augmented_batch(
+                        args,
                         dataset="train",
                         batch_size=train_batch_size,
                         aug_type="global",
@@ -420,6 +420,7 @@ def train(args):
 
 
     valid_generator = produce_augmented_batch(
+                        args,
                         dataset="dev",
                         batch_size=valid_batch_size,
                         aug_type="None",

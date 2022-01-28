@@ -51,7 +51,7 @@ def open_scp(scp_path):
     return meeting_path_lists
 
 
-def build_global_dvec_dict(dataset, split=False):
+def build_global_dvec_dict(args, dataset, split=False):
     """Builds global d-vector dictionary (d-vectors from across all meetings)
     
     :param: str dataset: "train", "dev", or "eval"
@@ -59,7 +59,7 @@ def build_global_dvec_dict(dataset, split=False):
     :return: dict global_dvec_dict[speaker_label] = List[dvector] where dvector is 32-D np array
     """
 
-    scp_path, rttm_path = get_file_paths(dataset)
+    scp_path, rttm_path = get_file_paths(args, dataset)
     global_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
     segment_desc_dict = build_segment_desc_dict(rttm_path)
@@ -89,14 +89,14 @@ def build_global_dvec_dict(dataset, split=False):
     return global_dvec_dict
 
 
-def build_meeting_dvec_dict(dataset, split=False):
+def build_meeting_dvec_dict(args, dataset, split=False):
     """Build meeting-level d-vector dictionary (dictionary of dictionaries, one per meeting).
     
     :param: str dataset: "train", "dev", or "eval"
     :param: Bool split: splits segments longer than 2s if True
     :return: dict meeting_dvec_dict[meeting_id] = {speaker_label: List[dvector]}
     """
-    scp_path, rttm_path = get_file_paths(dataset)
+    scp_path, rttm_path = get_file_paths(args, dataset)
     meeting_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
     segment_desc_dict = build_segment_desc_dict(rttm_path)
@@ -127,7 +127,7 @@ def build_meeting_dvec_dict(dataset, split=False):
     return meeting_dvec_dict
 
 
-def build_segment_dicts(dataset):
+def build_segment_dicts(args, dataset):
     """Build averaged_segmented_meetings_dict and segmented_speakers_dict (labels).
 
     :param: str dataset: "train", "dev", or "eval"
@@ -136,7 +136,7 @@ def build_segment_dicts(dataset):
     :return: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for each
             meeting)
     """
-    scp_path, rttm_path = get_file_paths(dataset)
+    scp_path, rttm_path = get_file_paths(args, dataset)
     # create two dictionaries with key as meeting_id:
     segmented_speakers_dict = {}  # value is array of speakers aligning with segments
     averaged_segmented_meetings_dict = {}  # value is array of segments.  Each segment is 1 d-vector
@@ -162,21 +162,18 @@ def build_segment_dicts(dataset):
     return averaged_segmented_meetings_dict, segmented_speakers_dict
 
 
-def get_file_paths(dataset):
+def get_file_paths(args, dataset):
     """Get path for chosen dataset.
-    Dataset can be either 'train', 'dev' or 'eval'.
+    Dataset can be either 'train' or 'dev'.
     """
     if dataset == 'train':
-        scp_path = "/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp"
-        rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm"
+        scp_path = args.train_scp
+        rttm_path = args.train_rttm
     elif dataset == 'dev':
-        scp_path = "/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp"
-        rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm"
-    elif dataset == 'eval':
-        scp_path = "/home/mifs/jhrt2/newDNC/data/arks.concat/eval.scp"
-        rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm"
+        scp_path = args.valid_scp
+        rttm_path = args.valid_rttm
     else:
-        raise ValueError("Expected dataset argument to be 'train', 'dev' or 'eval'")
+        raise ValueError("Expected dataset argument to be 'train' or 'dev'")
     return scp_path, rttm_path
 
 

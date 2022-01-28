@@ -295,6 +295,16 @@ def get_parser():
     # DNC related
     parser.add_argument('--rotate', type=strtobool, default=False,
                         help='set to use Diaconis augmentation')
+
+    # paths
+    parser.add_argument('--train-scp', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
+    parser.add_argument('--valid-scp', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp", help='')
+    parser.add_argument('--train-rttm', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
+    parser.add_argument('--valid-rttm', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
     return parser
 
 

@@ -228,7 +228,7 @@ def produce_augmented_batch_function(dataset='dev', batch_size=25, aug_type="glo
     return aug_meetings, aug_speakers
 
 
-def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", meeting_length=50,
+def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="global", meeting_length=50,
         num_batches=int(1e10), Diac=True):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
@@ -243,11 +243,11 @@ def produce_augmented_batch(dataset='dev', batch_size=25, aug_type="global", mee
     """
     batch_size = int(batch_size)
     # load data
-    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(dataset)
+    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(args, dataset)
     if aug_type == "global":
-        global_dvec_dict = build_global_dvec_dict(dataset)
+        global_dvec_dict = build_global_dvec_dict(args, dataset)
     elif aug_type == "meeting":
-        meeting_dvec_dict = build_meeting_dvec_dict(dataset)
+        meeting_dvec_dict = build_meeting_dvec_dict(args, dataset)
 
     for _ in range(num_batches):
         # Two dictionaries with key as new meeting_id
