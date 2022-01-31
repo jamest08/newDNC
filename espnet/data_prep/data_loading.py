@@ -1,10 +1,9 @@
 """Loading meeting and segmentation data from scp and rttm files."""
 
-#test branching 
-
 import kaldiio
 import numpy as np
 from collections import defaultdict
+import configargparse
 
 
 def open_rttm(rttm_path):
@@ -53,14 +52,12 @@ def open_scp(scp_path):
     return meeting_path_lists
 
 
-def build_global_dvec_dict(args, dataset, split=False):
+def build_global_dvec_dict(args, dataset):
     """Builds global d-vector dictionary (d-vectors from across all meetings)
     
-    :param: str dataset: "train", "dev", or "eval"
-    :param: Bool split: splits segments longer than 2s if True
+    :param: str dataset: "train" or "dev"
     :return: dict global_dvec_dict[speaker_label] = List[dvector] where dvector is 32-D np array
     """
-
     scp_path, rttm_path = get_file_paths(args, dataset)
     global_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
@@ -72,30 +69,21 @@ def build_global_dvec_dict(args, dataset, split=False):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            segment = meeting_dvectors_array[start_index:end_index]
             speaker = segment_desc[2]
-            if split:
-                # split segments longer than 2s to give more training examples
-                num_subsegments = max(1, len(segment) // 100)
-                subsegments = np.array_split(segment, num_subsegments)
-            else:
-                subsegments = [segment]
-            for subsegment in subsegments:
-                averaged_subsegment = np.mean(subsegment, axis=0)
-                averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)
+            for index in range(start_index, end_index):
+                window = meeting_dvectors_array[index]
+                window = window/np.linalg.norm(window)
                 if speaker not in global_dvec_dict:
-                    global_dvec_dict[speaker] = [averaged_subsegment]
+                    global_dvec_dict[speaker] = [window]
                 else:
-                    global_dvec_dict[speaker].append(averaged_subsegment)
-
+                    global_dvec_dict[speaker].append(window)
     return global_dvec_dict
 
 
-def build_meeting_dvec_dict(args, dataset, split=False):
+def build_meeting_dvec_dict(args, dataset):
     """Build meeting-level d-vector dictionary (dictionary of dictionaries, one per meeting).
     
-    :param: str dataset: "train", "dev", or "eval"
-    :param: Bool split: splits segments longer than 2s if True
+    :param: str dataset: "train" or "dev"
     :return: dict meeting_dvec_dict[meeting_id] = {speaker_label: List[dvector]}
     """
     scp_path, rttm_path = get_file_paths(args, dataset)
@@ -110,21 +98,14 @@ def build_meeting_dvec_dict(args, dataset, split=False):
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            segment = meeting_dvectors_array[start_index:end_index]
             speaker = segment_desc[2]
-            if split:
-                # split segments longer than 2s to give more training examples
-                num_subsegments = max(1, len(segment) // 100)
-                subsegments = np.array_split(segment, num_subsegments)
-            else:
-                subsegments = [segment]
-            for subsegment in subsegments:
-                averaged_subsegment = np.mean(subsegment, axis=0)
-                averaged_subsegment = averaged_subsegment/np.linalg.norm(averaged_subsegment)
+            for index in range(start_index, end_index):
+                window = meeting_dvectors_array[index]
+                window = window/np.linalg.norm(window)
                 if speaker not in inner_dvec_dict:
-                    inner_dvec_dict[speaker] = [averaged_subsegment]
+                    inner_dvec_dict[speaker] = [window]
                 else:
-                    inner_dvec_dict[speaker].append(averaged_subsegment)
+                    inner_dvec_dict[speaker].append(window)
         meeting_dvec_dict[meeting_id] = inner_dvec_dict
     return meeting_dvec_dict
 
@@ -140,28 +121,26 @@ def build_segment_dicts(args, dataset):
     """
     scp_path, rttm_path = get_file_paths(args, dataset)
     # create two dictionaries with key as meeting_id:
-    segmented_speakers_dict = {}  # value is array of speakers aligning with segments
-    averaged_segmented_meetings_dict = {}  # value is array of segments.  Each segment is 1 d-vector
+    speakers_dict = {}  # value is array of speakers aligning with windows
+    meetings_dict = {}  # value is array of windows.  Each window is 1 d-vector
     meeting_path_lists = open_scp(scp_path)
     segment_desc_dict = build_segment_desc_dict(rttm_path)
     for meeting_path_list in meeting_path_lists:  # iterate through meetings
         meeting_id = meeting_path_list[0]
         meeting_path = meeting_path_list[1]
         meeting_dvectors_array = kaldiio.load_mat(meeting_path)
-        speakers = []
-        averaged_segments = []
+        meetings_dict[meeting_id] = []
+        speakers_dict[meeting_id] = []
         for segment_desc in segment_desc_dict[meeting_id]:
             start_index = segment_desc[0]
             end_index = segment_desc[1]
-            segment = meeting_dvectors_array[start_index:end_index]
-            averaged_segment = np.mean(segment, axis=0)
-            averaged_segment = averaged_segment/np.linalg.norm(averaged_segment)
             speaker = segment_desc[2]
-            speakers.append(speaker)
-            averaged_segments.append(averaged_segment)
-        averaged_segmented_meetings_dict[meeting_id] = averaged_segments
-        segmented_speakers_dict[meeting_id] = speakers
-    return averaged_segmented_meetings_dict, segmented_speakers_dict
+            for index in range(start_index, end_index):
+                window = meeting_dvectors_array[index]
+                window = window/np.linalg.norm(window)
+                meetings_dict[meeting_id].append(window)
+                speakers_dict[meeting_id].append(speaker)
+    return meetings_dict, speakers_dict
 
 
 def get_file_paths(args, dataset):
@@ -174,6 +153,9 @@ def get_file_paths(args, dataset):
     elif dataset == 'dev':
         scp_path = args.valid_scp
         rttm_path = args.valid_rttm
+    elif dataset == 'eval':
+        scp_path = args.eval_scp
+        rttm_path = args.eval_rttm
     else:
         raise ValueError("Expected dataset argument to be 'train' or 'dev'")
     return scp_path, rttm_path
@@ -198,3 +180,22 @@ def filter_encompassed_segments(_seg_list):
         if set(start_before).isdisjoint(end_after):
             seg_list.append(segment)
     return seg_list
+
+
+# def get_parser():  # debugging only
+#     parser = configargparse.ArgumentParser(
+#         description="Train an automatic speech recognition (ASR) model on one CPU, one or multiple GPUs",
+#         config_file_parser_class=configargparse.YAMLConfigFileParser,
+#         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
+#     parser.add_argument('--train-scp', type=str,
+#             default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
+#     parser.add_argument('--valid-scp', type=str,
+#             default="/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp", help='')
+#     parser.add_argument('--train-rttm', type=str,
+#             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
+#     parser.add_argument('--valid-rttm', type=str,
+#             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
+#     return parser
+
+# parser = get_parser()
+# args, _ = parser.parse_known_args()

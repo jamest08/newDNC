@@ -407,7 +407,7 @@ def train(args):
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
     valid_batch_size = 10  # is this right?
-    train_batch_size = 500
+    train_batch_size = 50
 
     train_generator = produce_augmented_batch(
                         args,
