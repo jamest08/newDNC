@@ -11,16 +11,9 @@ import kaldiio
 import utils
 from SpectralCluster.spectralcluster import SpectralClusterer
 
-from data_loading import build_segment_desc_dict, build_segment_dicts, build_global_dvec_dict, \
-<<<<<<< Updated upstream
-                         open_rttm, get_file_paths
-=======
-                         open_rttm, get_file_paths, build_meeting_dvec_dict
-from data_aug import produce_augmented_batch
-
-np.random.seed(0)
-# TODO: sort random seed: use new method
->>>>>>> Stashed changes
+from espnet.data_prep.data_loading import build_segment_desc_dict, build_segment_dicts, \
+    build_global_dvec_dict, open_rttm, get_file_paths, build_meeting_dvec_dict
+from espnet.data_prep.data_aug import produce_augmented_batch
 
 def setup():
     """Get cmds and setup directories."""
@@ -82,15 +75,8 @@ def evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmente
         cur_mat = np.array(averaged_segmented_meetings_dict[meeting_id])
         reference = segmented_speakers_dict[meeting_id]
         # assign unique integer to each speaker label
-        #print("meeting_id: ", meeting_id, '\n')
-        #print("labels: ", reference)
         ref_dict = {label: i for i, label in enumerate(set(reference))}
         reference = [ref_dict[label] for label in reference]
-<<<<<<< Updated upstream
-        #print("numbers: ", reference)
-        #assert len(reference) == len(cur_mat)
-=======
->>>>>>> Stashed changes
         if len(reference) == 1:
             results_dict[meeting_id] = [0]
             continue
@@ -132,26 +118,6 @@ def write_to_rttm(results_dict, dataset):
                 results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
                 results_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 
                                      str(segment[5]) + ' <NA> <NA> ' + str(hypothesis) + ' <NA>\n')
-<<<<<<< Updated upstream
-        # for segment_desc in segments_desc_list:
-        #     meeting_id = segment_desc[1]
-        #     segment_desc[5] = "<NA>"
-        #     segment_desc[6] = "<NA>"
-        #     for i in range(7):
-        #         results_file.write(str(segment_desc[i]) + ' ')
-        #         reference_file.write(str(segment_desc[i]) + ' ')
-        #     reference_file.write(str(segment_desc[7]) + ' ')
-        #     # change speaker label column (7) for results_dict
-        #     segment_desc[7] = results_dict[meeting_id][0]
-        #     results_dict[meeting_id] = np.delete(results_dict[meeting_id], 0)
-        #     results_file.write(str(segment_desc[7]) + ' ')
-        #     results_file.write("<NA>")
-        #     reference_file.write("<NA>")
-        #     results_file.write('\n')
-        #     reference_file.write('\n')
-=======
->>>>>>> Stashed changes
-
 
 
 def main():

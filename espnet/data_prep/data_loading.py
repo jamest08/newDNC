@@ -20,8 +20,8 @@ def build_segment_desc_dict(rttm_path):
     """Build dictionary segment_desc_dict.
 
     :param: str rttm_path: path to rttm file
-    :return: dict segment_desc_dict[meeting_id] =  np.array(start_index, end_index, speaker_label,
-    start_time, end_time, duration)
+    :return: dict segment_desc_dict[meeting_id] =  List(Tuple(start_index, end_index, speaker_label,
+    start_time, end_time, duration))
     """
     segment_desc_dict = defaultdict(list)
     segments_desc_list = open_rttm(rttm_path)
