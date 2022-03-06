@@ -35,6 +35,12 @@ valid_scp=
 train_rttm=
 valid_rttm=
 
+dvec=
+tdoa=
+gccphat=
+tdoa_aug=
+permute_aug=
+
 train_config=conf/tuning/train_transformer.yaml
 decode_config=conf/decode.yaml
 
@@ -120,10 +126,15 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --train-sample-rate ${train_sample} \
         --rotate ${rotate} \
         --seed ${seed} \
-        --train-scp ${train_scp} \
-        --valid-scp ${valid_scp} \
-        --train-rttm ${train_rttm} \
-        --valid-rttm ${valid_rttm}
+        --dvec ${dvec} \
+        --tdoa ${tdoa} \
+        --gccphat ${gccphat} \
+        --tdoa-aug ${tdoa_aug} \
+        --permute-aug ${permute_aug}
+        # --train-scp ${train_scp} \
+        # --valid-scp ${valid_scp} \
+        # --train-rttm ${train_rttm} \
+        # --valid-rttm ${valid_rttm} set in default in asr_train.py atm
 fi
 
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
