@@ -298,13 +298,27 @@ def get_parser():
 
     # paths
     parser.add_argument('--train-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
     parser.add_argument('--valid-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
     parser.add_argument('--train-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/train_window_level.rttm", help='')
     parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_window_level.rttm", help='')
+    parser.add_argument('--tdoa-directory', type=str,
+            default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
+
+    # aug args
+    parser.add_argument('--dvec', type=strtobool,
+            default=True, help='whether to include dvectors in input')
+    parser.add_argument('--tdoa', type=strtobool,
+            default=True, help='whether to include tdoas in input')
+    parser.add_argument('--gccphat', type=strtobool,
+            default=False, help='whether to include gccphats in input')
+    parser.add_argument('--tdoa-aug', type=strtobool,
+            default=True, help='whether to augment tdoa/gccphat')
+    parser.add_argument('--permute-aug', type=strtobool,
+            default=True, help='whether to use permutation augmentation on tdoa/gccphat')
     return parser
 
 

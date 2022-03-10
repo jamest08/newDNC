@@ -1,0 +1,175 @@
+# asr_recog.py --config conf/decode.yaml --ngpu 0 --backend pytorch --recog-json dump/mdm_dev/dvector/split16utt/data.10.json --result-label exp/mdm_train_pytorch_dvecgccphat/decode_mdm_dev_decode/data.10.json --model exp/mdm_train_pytorch_dvecgccphat/results/model.acc.best 
+# Started at Tue  8 Mar 15:43:33 GMT 2022
+#
+2022-03-08 15:43:33,193 (asr_recog:137) INFO: python path = /home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/../../..:
+2022-03-08 15:43:33,194 (asr_recog:142) INFO: set random seed = 1
+2022-03-08 15:43:33,194 (asr_recog:150) INFO: backend = pytorch
+2022-03-08 15:43:35,274 (deterministic_utils:24) INFO: torch type check is disabled
+2022-03-08 15:43:35,274 (asr_utils:361) INFO: reading a config file from exp/mdm_train_pytorch_dvecgccphat/results/model.json
+2022-03-08 15:43:35,274 (asr:270) INFO: reading model parameters from exp/mdm_train_pytorch_dvecgccphat/results/model.acc.best
+/home/mifs/jhrt2/newDNC/venv/lib/python3.7/site-packages/torch/nn/_reduction.py:49: UserWarning: size_average and reduce args will be deprecated, please use reduction='none' instead.
+  warnings.warn(warning.format(ret))
+2022-03-08 15:43:36,407 (asr:597) INFO: (1/18) decoding AMI-0ES2011d-008
+2022-03-08 15:43:36,444 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:43:36,445 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:43:36,445 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:43:49,814 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:43:49,815 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:43:49,815 (e2e_asr_transformer:401) INFO: total log probability: -5.421856641769409
+2022-03-08 15:43:49,815 (e2e_asr_transformer:402) INFO: normalized log probability: -0.05315545727224911
+2022-03-08 15:43:49,815 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:43:49,815 (asr:597) INFO: (2/18) decoding AMI-0ES2011d-009
+2022-03-08 15:43:49,845 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:43:49,846 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:43:49,846 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:44:02,031 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:02,031 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:02,031 (e2e_asr_transformer:401) INFO: total log probability: -3.7128429412841797
+2022-03-08 15:44:02,031 (e2e_asr_transformer:402) INFO: normalized log probability: -0.03640042099298215
+2022-03-08 15:44:02,031 (asr_utils:542) INFO: prediction : 1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111<eos>
+2022-03-08 15:44:02,031 (asr:597) INFO: (3/18) decoding AMI-0ES2011d-010
+2022-03-08 15:44:02,055 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:44:02,055 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:44:02,055 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:44:11,904 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:11,904 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:11,905 (e2e_asr_transformer:401) INFO: total log probability: -3.976755976676941
+2022-03-08 15:44:11,905 (e2e_asr_transformer:402) INFO: normalized log probability: -0.03898780369291119
+2022-03-08 15:44:11,905 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:44:11,905 (asr:597) INFO: (4/18) decoding AMI-0ES2011d-011
+2022-03-08 15:44:11,940 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:44:11,941 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:44:11,941 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:44:21,623 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:21,623 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:21,623 (e2e_asr_transformer:401) INFO: total log probability: -4.657635927200317
+2022-03-08 15:44:21,623 (e2e_asr_transformer:402) INFO: normalized log probability: -0.045663097325493306
+2022-03-08 15:44:21,623 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:44:21,623 (asr:597) INFO: (5/18) decoding AMI-0ES2011d-012
+2022-03-08 15:44:21,646 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:44:21,646 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:44:21,646 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:44:30,550 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:30,550 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:30,550 (e2e_asr_transformer:401) INFO: total log probability: -3.537147641181946
+2022-03-08 15:44:30,550 (e2e_asr_transformer:402) INFO: normalized log probability: -0.03467791805080339
+2022-03-08 15:44:30,550 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:44:30,550 (asr:597) INFO: (6/18) decoding AMI-0ES2011d-013
+2022-03-08 15:44:30,571 (e2e_asr_transformer:238) INFO: input lengths: 92
+2022-03-08 15:44:30,571 (e2e_asr_transformer:254) INFO: max output length: 92
+2022-03-08 15:44:30,571 (e2e_asr_transformer:255) INFO: min output length: 92
+2022-03-08 15:44:40,594 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:40,595 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:40,595 (e2e_asr_transformer:401) INFO: total log probability: -6.713703155517578
+2022-03-08 15:44:40,595 (e2e_asr_transformer:402) INFO: normalized log probability: -0.07142237399486785
+2022-03-08 15:44:40,595 (asr_utils:542) INFO: prediction : 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:44:40,595 (asr:597) INFO: (7/18) decoding AMI-0IS1008a-000
+2022-03-08 15:44:40,630 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:44:40,630 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:44:40,630 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:44:52,694 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:44:52,694 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:44:52,694 (e2e_asr_transformer:401) INFO: total log probability: -4.585668921470642
+2022-03-08 15:44:52,694 (e2e_asr_transformer:402) INFO: normalized log probability: -0.04495753844579061
+2022-03-08 15:44:52,694 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:44:52,694 (asr:597) INFO: (8/18) decoding AMI-0IS1008a-001
+2022-03-08 15:44:52,717 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:44:52,717 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:44:52,717 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:02,050 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:02,050 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:02,051 (e2e_asr_transformer:401) INFO: total log probability: -4.7949546575546265
+2022-03-08 15:45:02,051 (e2e_asr_transformer:402) INFO: normalized log probability: -0.04700935938779045
+2022-03-08 15:45:02,051 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:02,051 (asr:597) INFO: (9/18) decoding AMI-0IS1008a-002
+2022-03-08 15:45:02,073 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:02,073 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:02,073 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:10,963 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:10,963 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:10,963 (e2e_asr_transformer:401) INFO: total log probability: -5.331844091415405
+2022-03-08 15:45:10,963 (e2e_asr_transformer:402) INFO: normalized log probability: -0.052272981288386325
+2022-03-08 15:45:10,963 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:10,963 (asr:597) INFO: (10/18) decoding AMI-0IS1008a-003
+2022-03-08 15:45:10,986 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:10,986 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:10,986 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:19,844 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:19,844 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:19,845 (e2e_asr_transformer:401) INFO: total log probability: -4.87847101688385
+2022-03-08 15:45:19,845 (e2e_asr_transformer:402) INFO: normalized log probability: -0.04782814722435147
+2022-03-08 15:45:19,845 (asr_utils:542) INFO: prediction : 1111111111111111111111111111111111000000000111111111111111100000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:19,845 (asr:597) INFO: (11/18) decoding AMI-0IS1008a-004
+2022-03-08 15:45:19,867 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:19,867 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:19,867 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:28,782 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:28,782 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:28,782 (e2e_asr_transformer:401) INFO: total log probability: -6.318534970283508
+2022-03-08 15:45:28,782 (e2e_asr_transformer:402) INFO: normalized log probability: -0.0619464212772893
+2022-03-08 15:45:28,782 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:28,782 (asr:597) INFO: (12/18) decoding AMI-0IS1008a-005
+2022-03-08 15:45:28,805 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:28,805 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:28,805 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:39,311 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:39,311 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:39,311 (e2e_asr_transformer:401) INFO: total log probability: -8.178941011428833
+2022-03-08 15:45:39,311 (e2e_asr_transformer:402) INFO: normalized log probability: -0.08018569619047876
+2022-03-08 15:45:39,311 (asr_utils:542) INFO: prediction : 1111111111111000000000000000000000000000000000000011111111110000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:39,312 (asr:597) INFO: (13/18) decoding AMI-0IS1008a-006
+2022-03-08 15:45:39,346 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:39,347 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:39,347 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:45:51,127 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:51,127 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:51,127 (e2e_asr_transformer:401) INFO: total log probability: -6.164667010307312
+2022-03-08 15:45:51,127 (e2e_asr_transformer:402) INFO: normalized log probability: -0.06043791186575796
+2022-03-08 15:45:51,127 (asr_utils:542) INFO: prediction : 1111111111111111111111111111111110000000000000000000000000000000011111111110000000000000000000001111<eos>
+2022-03-08 15:45:51,128 (asr:597) INFO: (14/18) decoding AMI-0IS1008a-007
+2022-03-08 15:45:51,151 (e2e_asr_transformer:238) INFO: input lengths: 81
+2022-03-08 15:45:51,151 (e2e_asr_transformer:254) INFO: max output length: 81
+2022-03-08 15:45:51,151 (e2e_asr_transformer:255) INFO: min output length: 81
+2022-03-08 15:45:59,036 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:45:59,037 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:45:59,037 (e2e_asr_transformer:401) INFO: total log probability: -4.225648522377014
+2022-03-08 15:45:59,037 (e2e_asr_transformer:402) INFO: normalized log probability: -0.050911427980445956
+2022-03-08 15:45:59,037 (asr_utils:542) INFO: prediction : 000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:45:59,037 (asr:597) INFO: (15/18) decoding AMI-0IS1008b-000
+2022-03-08 15:45:59,063 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:45:59,063 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:45:59,063 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:46:08,799 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:46:08,799 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:46:08,799 (e2e_asr_transformer:401) INFO: total log probability: -2.196271061897278
+2022-03-08 15:46:08,799 (e2e_asr_transformer:402) INFO: normalized log probability: -0.02153206923428704
+2022-03-08 15:46:08,799 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:46:08,799 (asr:597) INFO: (16/18) decoding AMI-0IS1008b-001
+2022-03-08 15:46:08,822 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:46:08,822 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:46:08,822 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:46:20,292 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:46:20,293 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:46:20,293 (e2e_asr_transformer:401) INFO: total log probability: -4.623536467552185
+2022-03-08 15:46:20,293 (e2e_asr_transformer:402) INFO: normalized log probability: -0.04532878889757044
+2022-03-08 15:46:20,293 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+2022-03-08 15:46:20,293 (asr:597) INFO: (17/18) decoding AMI-0IS1008b-002
+2022-03-08 15:46:20,321 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:46:20,321 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:46:20,321 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:46:29,654 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:46:29,655 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:46:29,655 (e2e_asr_transformer:401) INFO: total log probability: -4.461121201515198
+2022-03-08 15:46:29,655 (e2e_asr_transformer:402) INFO: normalized log probability: -0.04373648236779606
+2022-03-08 15:46:29,655 (asr_utils:542) INFO: prediction : 2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222<eos>
+2022-03-08 15:46:29,655 (asr:597) INFO: (18/18) decoding AMI-0IS1008b-003
+2022-03-08 15:46:29,677 (e2e_asr_transformer:238) INFO: input lengths: 100
+2022-03-08 15:46:29,677 (e2e_asr_transformer:254) INFO: max output length: 100
+2022-03-08 15:46:29,677 (e2e_asr_transformer:255) INFO: min output length: 100
+2022-03-08 15:46:38,542 (e2e_asr_transformer:350) INFO: adding <eos> in the last postion in the loop
+2022-03-08 15:46:38,542 (e2e_asr_transformer:380) INFO: no hypothesis. Finish decoding.
+2022-03-08 15:46:38,542 (e2e_asr_transformer:401) INFO: total log probability: -5.914958834648132
+2022-03-08 15:46:38,542 (e2e_asr_transformer:402) INFO: normalized log probability: -0.05798979249655032
+2022-03-08 15:46:38,542 (asr_utils:542) INFO: prediction : 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000<eos>
+# Accounting: time=185 threads=1
+# Ended (code 0) at Tue  8 Mar 15:46:38 GMT 2022, elapsed time 185 seconds

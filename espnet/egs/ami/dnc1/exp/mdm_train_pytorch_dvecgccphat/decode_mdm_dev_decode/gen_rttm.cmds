@@ -1,0 +1,3 @@
+------------------------------------
+scoring/gen_rttm.py --input-scp scoring/scoring_dev.scp --js-dir espnet/egs/ami/dnc1/exp/mdm_train_pytorch_dvecgccphat/decode_mdm_dev_decode/ --js-num 16 --js-name data --rttm-name evaldnc
+------------------------------------

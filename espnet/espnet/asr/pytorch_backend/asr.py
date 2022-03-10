@@ -12,6 +12,8 @@ import math
 import os
 import sys
 
+from sklearn.metrics import fowlkes_mallows_score
+
 from chainer import reporter as reporter_module
 from chainer import training
 from chainer.training import extensions
@@ -299,7 +301,8 @@ def train(args):
     # odim = int(valid_json[utts[0]]['output'][0]['shape'][-1])
 
     # TODO: find these properly from some data
-    idim = 32
+    # idim = 32
+    idim = 32*args.dvec + 7*args.tdoa + 7*args.gccphat
     odim = 5
 
     logging.info('#input dims : ' + str(idim))
@@ -406,15 +409,23 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    valid_batch_size = 10  # is this right?
-    train_batch_size = 500
+    valid_batch_size = 250  # is this right?
+    train_batch_size = 250
+    meeting_length = 100  # roughly equivalent to 50 segments
 
+    print("Initialising train_generator")
     train_generator = produce_augmented_batch(
                         args,
                         dataset="train",
                         batch_size=train_batch_size,
-                        aug_type="global",
-                        Diac=True)
+                        aug_type="None",
+                        meeting_length=meeting_length,
+                        Diac=True,
+                        dvec=args.dvec,
+                        tdoa=args.tdoa,
+                        gccphat=args.gccphat,
+                        tdoa_aug=args.tdoa_aug,
+                        permute_aug=args.permute_aug)
     train_iter = OnTheFlyIterator(train_generator, train_batch_size)
     train_iter = {'main': train_iter}
 
@@ -424,7 +435,13 @@ def train(args):
                         dataset="dev",
                         batch_size=valid_batch_size,
                         aug_type="None",
-                        Diac=False)
+                        meeting_length=meeting_length,
+                        Diac=False,
+                        dvec=args.dvec,
+                        tdoa=args.tdoa,
+                        gccphat=args.gccphat,
+                        tdoa_aug=False,
+                        permute_aug=False)
     valid_iter = OnTheFlyIterator(valid_generator, valid_batch_size, repeat=False, shuffle=False)
     valid_iter = {'main': valid_iter}
 
