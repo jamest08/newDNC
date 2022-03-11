@@ -247,7 +247,7 @@ def filter_encompassed_segments(_seg_list):
     return seg_list
 
 
-def get_tdoa_gccphat(args, meeting_ids, norm=False):
+def get_tdoa_gccphat(args, meeting_ids, norm=True):
     """Returns two dicts storing TDOA and GCC-PHAT values for meetings in a dataset.
     
     :param: str args.directory_path: path to directory containing del files

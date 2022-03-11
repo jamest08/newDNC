@@ -60,7 +60,7 @@ if sys.version_info[0] == 2:
 else:
     from itertools import zip_longest as zip_longest
 
-REPORT_INTERVAL = 100
+REPORT_INTERVAL = 100  # how often to log
 
 
 class CustomEvaluator(extensions.Evaluator):
@@ -163,7 +163,8 @@ class CustomUpdater(training.StandardUpdater):
         # Get the next batch ( a list of json files)
         batch = train_iter.next()
         
-        self.iteration += 1
+        # self.iteration += 1
+
         x = self.converter(batch, self.device)
 
         # Compute the loss at this time step and accumulate it
@@ -409,7 +410,7 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    valid_batch_size = 250  # is this right?
+    valid_batch_size = 10  # is this right?
     train_batch_size = 250
     meeting_length = 100  # roughly equivalent to 50 segments
 

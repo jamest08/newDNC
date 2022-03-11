@@ -105,7 +105,7 @@ def main():
     dataset = 'dev'
     scp_path, rttm_path = get_file_paths(args, dataset)
 
-    meetings, speakers = build_segment_dicts(args, dataset, dvec=True, tdoa=False, gccphat=True)
+    meetings, speakers = build_segment_dicts(args, dataset, dvec=True, tdoa=True, gccphat=False)
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 

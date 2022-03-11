@@ -15,6 +15,7 @@ try:  # use this one for generator
 except:  # use this for debugging
     from data_loading import build_segment_dicts, build_global_dvec_dict, build_meeting_dvec_dict
 
+np.set_printoptions(threshold=np.inf)
 
 def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, dvec=True, 
     tdoa=False, gccphat=False, raw_tdoas=None, raw_gccphats=None, permute_aug=False, meeting_length=100):
@@ -398,12 +399,19 @@ def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="glob
         aug_speakers_list = []
         for meeting_id in aug_meetings:
             aug_meetings_list.append(aug_meetings[meeting_id])
-
             # convert speaker labels to numbers
-            labels = aug_speakers[meeting_id]
-            spk_dict = {label: i for i, label in enumerate(set(labels))}
-            labels = [spk_dict[label] for label in labels]
-            aug_speakers_list.append(np.array(labels))
+            speaker_labels = aug_speakers[meeting_id]
+            num_labels = []
+            spk_dict = {}  # maps speaker labels to numbers
+            next_num = 0  # next available number for a new speaker
+            for speaker_label in speaker_labels:
+                try:
+                    num_labels.append(spk_dict[speaker_label])
+                except:  # occurs if first instance of speaker
+                    spk_dict[speaker_label] = next_num
+                    next_num += 1
+                    num_labels.append(spk_dict[speaker_label])
+            aug_speakers_list.append(np.array(num_labels))
         batch =[(aug_meetings_list, aug_speakers_list)]
         yield batch
 
@@ -422,7 +430,7 @@ def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging and e
         meeting_level_scp = {eachline.split()[0]:eachline.split()[1].rstrip()
                                 for eachline in _scp.readlines()}
     for meeting_id, meeting in meetings.items():
-        labels = speakers[meeting_id]
+        speaker_labels = speakers[meeting_id]
         input_dict = {}
         input_dict["feat"] = meeting_level_scp[meeting_id]
         input_dict["name"] = "input1"
@@ -431,10 +439,20 @@ def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging and e
         output_dict = {}
         output_dict["name"] = "target1"
         # assign speakers integers
-        spk_dict = {label: str(i) for i, label in enumerate(set(labels))}
-        labels = [spk_dict[label] for label in labels]
-        output_dict["shape"] = [len(labels), 4+1]  # where does 4+1 come from?
-        output_dict["tokenid"] = ' '.join(labels)
+        num_labels = []
+        spk_dict = {}  # maps speaker labels to numbers
+        next_num = 0  # next available number for a new speaker
+        for speaker_label in speaker_labels:
+            try:
+                num_labels.append(str(spk_dict[speaker_label]))
+            except:  # occurs if first instance of speaker
+                spk_dict[speaker_label] = next_num
+                next_num += 1
+                num_labels.append(str(spk_dict[speaker_label]))
+        # spk_dict = {label: str(i) for i, label in enumerate(set(labels))}
+        # labels = [spk_dict[label] for label in labels]
+        output_dict["shape"] = [len(num_labels), 4+1]  # where does 4+1 come from?
+        output_dict["tokenid"] = ' '.join(num_labels)
         json_dict["utts"][meeting_id] = {}
         json_dict["utts"][meeting_id]["input"] = [input_dict]
         json_dict["utts"][meeting_id]["output"] = [output_dict]
@@ -481,19 +499,19 @@ def main():
     """Main"""
     parser = get_parser()
     args, _ = parser.parse_known_args()
-    dataset = "dev"
+    dataset = "train"
     aug_type = "None"
-    Diac = True
-    meeting_length = 100
+    Diac = False
+    meeting_length = 50
     dvec = True
-    tdoa = True
+    tdoa = False
     gccphat = False
     tdoa_aug = False
-    permute_aug = True
+    permute_aug = False
 
     meetings, speakers = produce_augmented_batch_function(args,
                                                         dataset=dataset,
-                                                        batch_size=1,
+                                                        batch_size=735000,
                                                         aug_type=aug_type,
                                                         meeting_length=meeting_length,
                                                         Diac=Diac,
@@ -504,8 +522,8 @@ def main():
                                                         permute_aug=permute_aug)
 
 
-    # write_to_ark(split_meetings, dataset, aug_type)
-    # write_to_json(split_meetings, split_speakers, dataset, aug_type)
+    write_to_ark(meetings, dataset, aug_type)
+    write_to_json(meetings, speakers, dataset, aug_type)
 
 
 if __name__ == '__main__':

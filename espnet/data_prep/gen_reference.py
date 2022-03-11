@@ -63,7 +63,7 @@ def main():
     parser.add_argument('--submeeting-rttm', required=True, type=str,
                         help="path to an rttm file that is already split into submeetings")  # should be of form "/home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/exp/mdm_train_pytorch_***/decode_mdm_dev_decode/evaldnc.rttm"
     parser.add_argument('--input-rttm', type=str,
-                        default = "/home/mifs/jhrt2/newDNC/data/dev_silence_stripped_reference.rttm",
+                        default = "/home/mifs/jhrt2/newDNC/data/eval_silence_stripped_reference.rttm",
                         help="path to an input ref rttm file")
     args = parser.parse_args()
 

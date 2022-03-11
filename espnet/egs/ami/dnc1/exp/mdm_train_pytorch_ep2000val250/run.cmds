@@ -1,3 +1,0 @@
--------------------------------
-run.sh --stage 4 --stop_stage 4 --tag ep2000val250 --dvec true --tdoa true --gccphat false --tdoa-aug false --permute-aug false
--------------------------------

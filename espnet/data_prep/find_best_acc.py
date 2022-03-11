@@ -1,8 +1,20 @@
 """Find best acc values from log files after training"""
 
 import json
+import configargparse
 
-tag = "dvecgccphat"
+def get_parser():  # official paths should be maintained in asr_train.py
+    parser = configargparse.ArgumentParser(
+        description="Prepare eval files",
+        config_file_parser_class=configargparse.YAMLConfigFileParser,
+        formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--tag', type=str, help='')
+    return parser
+
+parser = get_parser()
+args, _ = parser.parse_known_args()
+
+tag = args.tag
 log_path = "/home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/exp/mdm_train_pytorch_%s/results/log" % tag
 
 with open(log_path, 'r') as log_file:

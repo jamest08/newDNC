@@ -1,9 +1,0 @@
--------------------------------
-run.sh --stage 4 --stop_stage 4 --tag dvecgccphat --dvec true --tdoa false --gccphat true --tdoa-aug false --permute-aug false
--------------------------------
--------------------------------
-run.sh --stage 5 --decode_json /data/mifs_scratch/jhrt2/aug_data_None/eval.json --tag dvecgccphat
--------------------------------
--------------------------------
-run.sh --stage 5 --decode_json /data/mifs_scratch/jhrt2/aug_data_None/dev.json --tag dvecgccphat
--------------------------------

@@ -312,13 +312,13 @@ def get_parser():
     parser.add_argument('--dvec', type=strtobool,
             default=True, help='whether to include dvectors in input')
     parser.add_argument('--tdoa', type=strtobool,
-            default=True, help='whether to include tdoas in input')
+            default=False, help='whether to include tdoas in input')
     parser.add_argument('--gccphat', type=strtobool,
             default=False, help='whether to include gccphats in input')
     parser.add_argument('--tdoa-aug', type=strtobool,
-            default=True, help='whether to augment tdoa/gccphat')
+            default=False, help='whether to augment tdoa/gccphat')
     parser.add_argument('--permute-aug', type=strtobool,
-            default=True, help='whether to use permutation augmentation on tdoa/gccphat')
+            default=False, help='whether to use permutation augmentation on tdoa/gccphat')
     return parser
 
 
