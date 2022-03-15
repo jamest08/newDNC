@@ -8,6 +8,7 @@ import scipy as sp
 import random
 from scipy.stats import special_ortho_group as SO
 from collections import defaultdict
+from math import floor
 import configargparse
 
 try:  # use this one for generator
@@ -80,15 +81,16 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
     return augmented_meeting, augmented_speakers
 
 
-def random_average(vector_list):
+def random_average(vector_list, min_vectors_frac=0.8):
     """Average a list of of vectors using a random subset of them
     Used to augment tdoa/gccphat part of input vector.
 
     :param: List[np.array()] vector_list: List of vectors to be averaged (for one segment)
+    :param: Float min_vectors_frac:  Minimum proportion of total number of vectors to be used in average
     :return: List[np.array()] mean_vector: Random average of vectors
     """
     # first choose number of vectors to use in average
-    num_vectors = random.randint(1, len(vector_list))
+    num_vectors = random.randint(max(1, floor(min_vectors_frac*len(vector_list))), len(vector_list))
     # choose indices of subset of vectors to average
     vector_indices = random.sample(range(len(vector_list)), num_vectors)
     # select the sample of vectors
@@ -314,7 +316,7 @@ def produce_augmented_batch_function(args, dataset='train', batch_size=25, aug_t
 
 
 def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="global", meeting_length=100,
-        num_batches=int(1e10), Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False):  # generator version as used in on-the-fly
+        num_batches=int(1e10), Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False, tdoa_norm=False):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
 
@@ -333,15 +335,15 @@ def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="glob
     """
     batch_size = int(batch_size)
     # load data
-    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat)
+    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat, tdoa_norm=tdoa_norm)
 
     if tdoa_aug == True:
         if tdoa == True:
-            raw_tdoas, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=True, gccphat=False, average=False)
+            raw_tdoas, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=True, gccphat=False, average=False, tdoa_norm=tdoa_norm)
         else:
             raw_tdoas = None
         if gccphat == True:
-            raw_gccphats, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=False, gccphat=True, average=False)
+            raw_gccphats, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=False, gccphat=True, average=False, tdoa_norm=tdoa_norm)
         else:
             raw_gccphats = None
     else:
@@ -501,7 +503,7 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = "train"
     aug_type = "None"
-    Diac = False
+    Diac = True
     meeting_length = 50
     dvec = True
     tdoa = False

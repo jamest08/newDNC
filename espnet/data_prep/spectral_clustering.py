@@ -33,10 +33,12 @@ def setup():
             default="/home/mifs/jhrt2/newDNC/data/rttms/test_train.rttm", help='')
     cmdparser.add_argument('--valid-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/rttms/test_dev.rttm", help='')
+
     cmdparser.add_argument('--eval-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn/eval.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
     cmdparser.add_argument('--eval-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/eval_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms/test_eval.rttm", help='')
+
     #cmdparser.add_argument('injson', help='ark files containing the meetings', type=str)
     cmdargs = cmdparser.parse_args()
     return cmdargs
@@ -112,8 +114,8 @@ def write_to_rttm(args, results_dict, dataset):
     _, rttm_path = get_file_paths(args, dataset)
     segments_desc_list = open_rttm(rttm_path)  # non-filtered
     segments_desc_dict = build_segment_desc_dict(rttm_path) # filtered
-    with open(dataset + "_results.rttm", "w") as results_file, \
-         open(dataset + "_reference.rttm", "w") as reference_file:
+    with open(dataset + "_results_spectral.rttm", "w") as results_file, \
+         open(dataset + "_reference_spectral.rttm", "w") as reference_file:
          for meeting_id, meeting in segments_desc_dict.items():
             for segment in meeting:
                 reference_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 
@@ -128,7 +130,11 @@ def main():
     """main"""
     dataset = "eval"
     args = setup()
-    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(args, dataset)
+    dvec = False
+    tdoa = True
+    gccphat = False
+
+    averaged_segmented_meetings_dict, segmented_speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat)
 
     results_dict, _ = evaluate_spectralclustering(args, averaged_segmented_meetings_dict, segmented_speakers_dict)
 

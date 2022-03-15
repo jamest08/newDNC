@@ -102,10 +102,10 @@ def get_parser():  # official paths should be maintained in asr_train.py
 def main():
     parser = get_parser()
     args, _ = parser.parse_known_args()
-    dataset = 'dev'
+    dataset = 'eval'
     scp_path, rttm_path = get_file_paths(args, dataset)
 
-    meetings, speakers = build_segment_dicts(args, dataset, dvec=True, tdoa=True, gccphat=False)
+    meetings, speakers = build_segment_dicts(args, dataset, dvec=True, tdoa=False, gccphat=False, tdoa_norm=False)
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 

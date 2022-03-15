@@ -50,6 +50,7 @@ class OnTheFlyIterator(iterator.Iterator):
         self.batch_size = batch_size
         self._repeat = repeat
         self._shuffle = shuffle
+        self.epoch_size = 2940  # ie 10 mini-batches per epoch. should make this an arg in train_transformer.yaml
 
         if self._shuffle is not None:
             if order_sampler is not None:
@@ -75,8 +76,13 @@ class OnTheFlyIterator(iterator.Iterator):
 
         batch = next(self.generator)
 
-        self.epoch += 1
-        self.is_new_epoch = True
+        self.mini_batch += 1
+        if self.mini_batch == self.epoch_size:
+            self.epoch += 1
+            self.is_new_epoch = True
+            self.mini_batch = 0
+        else:
+            self.is_new_epoch = False
 
         return batch
 
@@ -84,7 +90,7 @@ class OnTheFlyIterator(iterator.Iterator):
 
     @property
     def epoch_detail(self):
-        return float(self.epoch)
+        return float(self.epoch + self.mini_batch/self.epoch_size)
 
     @property
     def previous_epoch_detail(self):
@@ -98,12 +104,14 @@ class OnTheFlyIterator(iterator.Iterator):
         self.epoch = 0
         self.is_new_epoch = False
 
+        self.mini_batch = 0 # number of batches in the epoch so far 
+
         # use -1 instead of None internally.
         self._previous_epoch_detail = -1.
 
-    @property
-    def _epoch_size(self):
-        return self.num_batches
+    # @property
+    # def _epoch_size(self):
+    #     return self.num_batches
 
     @property
     def repeat(self):

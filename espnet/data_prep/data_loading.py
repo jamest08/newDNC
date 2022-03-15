@@ -141,7 +141,7 @@ def build_meeting_dvec_dict(args, dataset, split=False, tdoa=False, gccphat=Fals
     return meeting_dvec_dict
 
 
-def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=True):
+def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=True, tdoa_norm=False):
     """Build averaged_segmented_meetings_dict and segmented_speakers_dict (labels).
 
     :param: str dataset: "train", "dev", or "eval"
@@ -164,7 +164,7 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
     segment_desc_dict = build_segment_desc_dict(rttm_path, filt=filt)
 
     if tdoa == True or gccphat == True:
-        tdoas, gccphats = get_tdoa_gccphat(args, segment_desc_dict.keys())
+        tdoas, gccphats = get_tdoa_gccphat(args, segment_desc_dict.keys(), norm=tdoa_norm)
 
     for meeting_path_list in meeting_path_lists:  # iterate through meetings
         meeting_id = meeting_path_list[0]
@@ -247,7 +247,7 @@ def filter_encompassed_segments(_seg_list):
     return seg_list
 
 
-def get_tdoa_gccphat(args, meeting_ids, norm=True):
+def get_tdoa_gccphat(args, meeting_ids, norm=False):
     """Returns two dicts storing TDOA and GCC-PHAT values for meetings in a dataset.
     
     :param: str args.directory_path: path to directory containing del files

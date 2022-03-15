@@ -40,6 +40,7 @@ tdoa=
 gccphat=
 tdoa_aug=
 permute_aug=
+tdoa_norm=
 
 train_config=conf/tuning/train_transformer.yaml
 decode_config=conf/decode.yaml
@@ -130,7 +131,8 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --tdoa ${tdoa} \
         --gccphat ${gccphat} \
         --tdoa-aug ${tdoa_aug} \
-        --permute-aug ${permute_aug}
+        --permute-aug ${permute_aug} \
+        --tdoa-norm ${tdoa_norm}
         # --train-scp ${train_scp} \
         # --valid-scp ${valid_scp} \
         # --train-rttm ${train_rttm} \

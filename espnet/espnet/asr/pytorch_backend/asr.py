@@ -410,7 +410,7 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    valid_batch_size = 10  # is this right?
+    valid_batch_size = 250  # roughly same as full dev set
     train_batch_size = 250
     meeting_length = 100  # roughly equivalent to 50 segments
 
@@ -426,7 +426,8 @@ def train(args):
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,
                         tdoa_aug=args.tdoa_aug,
-                        permute_aug=args.permute_aug)
+                        permute_aug=args.permute_aug,
+                        tdoa_norm=args.tdoa_norm)
     train_iter = OnTheFlyIterator(train_generator, train_batch_size)
     train_iter = {'main': train_iter}
 
@@ -442,7 +443,8 @@ def train(args):
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,
                         tdoa_aug=False,
-                        permute_aug=False)
+                        permute_aug=False,
+                        tdoa_norm=args.tdoa_norm)
     valid_iter = OnTheFlyIterator(valid_generator, valid_batch_size, repeat=False, shuffle=False)
     valid_iter = {'main': valid_iter}
 

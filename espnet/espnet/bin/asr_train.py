@@ -319,6 +319,8 @@ def get_parser():
             default=False, help='whether to augment tdoa/gccphat')
     parser.add_argument('--permute-aug', type=strtobool,
             default=False, help='whether to use permutation augmentation on tdoa/gccphat')
+    parser.add_argument('--tdoa-norm', type=strtobool,
+            default=False, help='whether to normalise TDOA/GCC-PHAT values')            
     return parser
 
 
