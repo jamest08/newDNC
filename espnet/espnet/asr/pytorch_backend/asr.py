@@ -412,7 +412,7 @@ def train(args):
 
     valid_batch_size = 250  # roughly same as full dev set
     train_batch_size = 250
-    meeting_length = 100  # roughly equivalent to 50 segments
+    meeting_length = 50  # roughly equivalent to 50 segments
 
     print("Initialising train_generator")
     train_generator = produce_augmented_batch(
@@ -421,7 +421,7 @@ def train(args):
                         batch_size=train_batch_size,
                         aug_type="None",
                         meeting_length=meeting_length,
-                        Diac=True,
+                        Diac=False,
                         dvec=args.dvec,
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,

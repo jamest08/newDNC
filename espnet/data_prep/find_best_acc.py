@@ -15,7 +15,8 @@ parser = get_parser()
 args, _ = parser.parse_known_args()
 
 tag = args.tag
-log_path = "/home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/exp/mdm_train_pytorch_%s/results/log" % tag
+#log_path = "/home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/exp/mdm_train_pytorch_%s/results/log" % tag
+log_path = "/data/mifs_scratch/jhrt2/models/DNC/mdm_train_pytorch_%s/results/log" % tag
 
 with open(log_path, 'r') as log_file:
     log = json.load(log_file)

@@ -6,6 +6,7 @@ import kaldiio
 import numpy as np
 from collections import defaultdict
 import os
+from copy import deepcopy
 
 from torch import float32
 import configargparse
@@ -31,6 +32,7 @@ def build_segment_desc_dict(rttm_path, filt=True):
     start_time, end_time, duration))
     """
     segment_desc_dict = defaultdict(list)
+    removed_segs_dict = defaultdict(list)
     segments_desc_list = open_rttm(rttm_path)
     for segment_desc in segments_desc_list:
         meeting_id = segment_desc[1]
@@ -50,8 +52,8 @@ def build_segment_desc_dict(rttm_path, filt=True):
                                               start_time, end_time, duration))
     if filt:
         for meeting_id, segment_descs in segment_desc_dict.items():  # filter encompassed segments
-            segment_desc_dict[meeting_id] = filter_encompassed_segments(segment_descs)
-    return segment_desc_dict
+            segment_desc_dict[meeting_id], removed_segs_dict[meeting_id] = filter_encompassed_segments(segment_descs)
+    return segment_desc_dict, removed_segs_dict
 
 
 def open_scp(scp_path):
@@ -156,55 +158,57 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             meeting)
     """
     print("Building segment dicts", 'dvec: ' + str(dvec), 'tdoa: ' + str(tdoa), 'gccphat: ' + str(gccphat), 'average: ' + str(average))
-    scp_path, rttm_path = get_file_paths(args, dataset)
+    # np_path is path to directory of numpy files, one per meeting
+    np_path, rttm_path = get_file_paths(args, dataset)
     # create two dictionaries with key as meeting_id:
     segmented_speakers_dict = {}  # value is array of speakers aligning with segments
     segmented_meetings_dict = {}  # value is array of segments.  Each segment is 1 d-vector
-    meeting_path_lists = open_scp(scp_path)
-    segment_desc_dict = build_segment_desc_dict(rttm_path, filt=filt)
+    meeting_files_list = os.listdir(np_path)  # list of names of files in embedding directory
+    meeting_files_list.remove("%s.csv" % dataset)
+    segment_desc_dict, removed_segs_dict = build_segment_desc_dict(rttm_path, filt=filt)
 
     if tdoa == True or gccphat == True:
         tdoas, gccphats = get_tdoa_gccphat(args, segment_desc_dict.keys(), norm=tdoa_norm)
 
-    for meeting_path_list in meeting_path_lists:  # iterate through meetings
-        meeting_id = meeting_path_list[0]
-        meeting_path = meeting_path_list[1]
+    for meeting_file in meeting_files_list:  # iterate through meetings
+        meeting_id = "AMIMDM-" + meeting_file[:-4]  # NB: AMIMDM- prefix added
+        meeting_path = np_path + '/' + meeting_file
         if dvec == True:
-            meeting_dvectors = kaldiio.load_mat(meeting_path)
-            dvec_dim =  meeting_dvectors.shape[1]  # 32
-            meeting = meeting_dvectors
+            meeting_vectors = np.load(meeting_path, allow_pickle=True)
+            # filter encompassed segments
+            meeting_vectors = np.delete(meeting_vectors, removed_segs_dict[meeting_id], axis=0)
 
-        # concatenate arrays, ignore final repeated/padding TDOA and GCC-PHAT values
-        if tdoa == True:
-            if dvec == True:
-                meeting_tdoas = tdoas[meeting_id][:len(meeting)]
-                meeting = np.concatenate((meeting, meeting_tdoas), axis=1, dtype=np.float32)
-            else:
-                meeting = np.array(tdoas[meeting_id][:-12], dtype=np.float32)
-        if gccphat == True:
-            if dvec == True or tdoa == True:
-                meeting_gccphats = gccphats[meeting_id][:len(meeting)]
-                meeting = np.concatenate((meeting, meeting_gccphats), axis=1, dtype=np.float32)
-            else:
-                meeting = np.array(gccphats[meeting_id][:-12], dtype=np.float32)
+            segmented_meetings_dict[meeting_id] = meeting_vectors
+            # need to normalise
+            # segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
+            # meeting = meeting_vectors
+
+        # # concatenate arrays, ignore final repeated/padding TDOA and GCC-PHAT values
+        # if tdoa == True:
+        #     if dvec == True:
+        #         meeting_tdoas = tdoas[meeting_id][:len(meeting)]
+        #         meeting = np.concatenate((meeting, meeting_tdoas), axis=1, dtype=np.float32)
+        #     else:
+        #         meeting = np.array(tdoas[meeting_id][:-12], dtype=np.float32)
+        # if gccphat == True:
+        #     if dvec == True or tdoa == True:
+        #         meeting_gccphats = gccphats[meeting_id][:len(meeting)]
+        #         meeting = np.concatenate((meeting, meeting_gccphats), axis=1, dtype=np.float32)
+        #     else:
+        #         meeting = np.array(gccphats[meeting_id][:-12], dtype=np.float32)
 
         speakers = []
-        segments = []
+        #segments = []
         for segment_desc in segment_desc_dict[meeting_id]:
-            start_index = segment_desc[0]
-            end_index = segment_desc[1]
-            segment = meeting[start_index:end_index]
+            # start_index = segment_desc[0]
+            # end_index = segment_desc[1]
+            # segment = meeting[start_index:end_index]
             # take average regardless of data included
-            if average == True:
-                segment = np.mean(segment, axis=0)
-            # only normalise dvec part
-            if dvec == True:
-                segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
             speaker = segment_desc[2]
             speakers.append(speaker)
-            segments.append(segment)
-        segmented_meetings_dict[meeting_id] = segments
         segmented_speakers_dict[meeting_id] = speakers
+        print(len(meeting_vectors), len(speakers))
+        assert(len(speakers) == len(meeting_vectors))
     return segmented_meetings_dict, segmented_speakers_dict
 
 
@@ -213,17 +217,17 @@ def get_file_paths(args, dataset):
     Dataset can be either 'train' or 'dev'.
     """
     if dataset == 'train':
-        scp_path = args.train_scp
+        np_path = args.train_np
         rttm_path = args.train_rttm
     elif dataset == 'dev':
-        scp_path = args.valid_scp
+        np_path = args.valid_np
         rttm_path = args.valid_rttm
     elif dataset == 'eval':
-        scp_path = args.eval_scp
+        np_path = args.eval_np
         rttm_path = args.eval_rttm
     else:
         raise ValueError("Expected dataset argument to be 'train', 'dev' or 'eval")
-    return scp_path, rttm_path
+    return np_path, rttm_path
 
 
 def filter_encompassed_segments(_seg_list):
@@ -233,8 +237,10 @@ def filter_encompassed_segments(_seg_list):
     :param: _seg_list np.array(segment_information)
     :return: seg_list np.array(segment_information)
     """
+    unsorted_seg_list = deepcopy(_seg_list)
     _seg_list.sort(key=lambda tup: tup[3])
     seg_list = []
+    removed_seg_indices = []
     for segment in _seg_list:
         start_time = segment[3]
         end_time = segment[4]
@@ -244,7 +250,10 @@ def filter_encompassed_segments(_seg_list):
         end_after.remove(segment)
         if set(start_before).isdisjoint(end_after):
             seg_list.append(segment)
-    return seg_list
+        else:
+            removed_seg_indices.append(unsorted_seg_list.index(segment))
+    
+    return seg_list, removed_seg_indices
 
 
 def get_tdoa_gccphat(args, meeting_ids, norm=False):
@@ -312,14 +321,14 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
         description="Load speech data",
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--train-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
-    parser.add_argument('--valid-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+    parser.add_argument('--train-np', type=str,
+            default="/home/mifs/epcl2/project/embeddings/james/train", help='')
+    parser.add_argument('--valid-np', type=str,
+            default="/home/mifs/epcl2/project/embeddings/james/dev", help='')
     parser.add_argument('--train-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/train_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
     parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     return parser
@@ -327,9 +336,10 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
 def main():
     parser = get_parser()
     args, _ = parser.parse_known_args()
-    dataset = 'train'
+    dataset = 'dev'
 
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=True, gccphat=True, average=True)
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=True)
+    
 
 if __name__ == '__main__':
     main()
