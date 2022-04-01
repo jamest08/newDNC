@@ -150,7 +150,7 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
     :param: Bool tdoa: include TDOA values
     :param: Bool gccphat: include GCC-PHAT values
     :param: Bool average: average segments or leave as array
-    :return: dict averaged_segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
+    :return: dict segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
             for each meeting.  Each vector has some combination of dvec, tdoa, gccphat in that order)
     :return: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for each
             meeting)
@@ -197,7 +197,7 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             # take average regardless of data included
             if average == True:
                 segment = np.mean(segment, axis=0)
-            # only normalise dvec part
+            # only L2-normalise dvec part
             if dvec == True:
                 segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
             speaker = segment_desc[2]

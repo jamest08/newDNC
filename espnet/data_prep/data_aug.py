@@ -23,7 +23,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
     """Sub-sequence randomisation.
        Randomly chooses a real meeting and samples a sub_meeting at segment boundaries.
 
-       :param: dict averaged_segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
+       :param: dict segmented_meetings_dict[meeting_id] = List[dvector] (Sequence of segments
             for each meeting)
        :param: dict segmented_speakers_dict[meeting_id] = List[str] (Sequence of speaker labels for
             each meeting)
@@ -34,6 +34,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
        :return: List[str] augmented_speaker: the new, augmented sequence of speaker labels
     """
     # ensure chosen meeting is longer than required sub-sample length (meeting_length)
+
     # TODO: this doesn't need to be repeated on each call.  Not urgent as not actually too slow
     valid_meeting_ids = np.array(list(segmented_meetings_dict.keys()))
     indexes_to_remove = []
@@ -78,6 +79,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
         augmented_meeting = permute_tdoa_gccphat(np.array(augmented_meeting, dtype=np.float32), dvec)
 
     augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
+
     return augmented_meeting, augmented_speakers
 
 
@@ -228,8 +230,8 @@ def Diaconis(batch):
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting.  indexed to only rotate d-vector part of vector (not tdoa/gccphat)
         batch[meeting_id][:, :dimension] = np.dot(batch[meeting_id][:, :dimension], rotation_mat)
-        # normalise variance
-        batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
+        # # normalise variance
+        # batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
     return batch
 
 
@@ -503,7 +505,7 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = "train"
     aug_type = "None"
-    Diac = True
+    Diac = False
     meeting_length = 50
     dvec = True
     tdoa = False
