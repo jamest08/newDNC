@@ -22,7 +22,7 @@ seed=1
 
 num_speaker=4
 init_model=""
-train_sample=0.2
+train_sample=1 # THIS USED TO BE 0.2
 rotate=false  # HAVE CHANGED THIS FROM TRUE TO FALSE.  AUG FUNCTIONS CAN CHOOSE DIAC ON-THE-FLY
 
 # feature configuration

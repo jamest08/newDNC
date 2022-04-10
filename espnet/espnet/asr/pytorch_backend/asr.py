@@ -410,9 +410,9 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    valid_batch_size = 250  # roughly same as full dev set
-    train_batch_size = 250
-    meeting_length = 100  # roughly equivalent to 50 segments
+    valid_batch_size = 50  # should this be the same as 
+    train_batch_size = 50
+    meeting_length = 50  # roughly equivalent to 50 segments
 
     print("Initialising train_generator")
     train_generator = produce_augmented_batch(

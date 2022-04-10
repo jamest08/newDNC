@@ -54,7 +54,7 @@ class Encoder(torch.nn.Module):
                 torch.nn.LayerNorm(attention_dim),
                 torch.nn.Dropout(dropout_rate),
                 torch.nn.ReLU(),
-                pos_enc_class(attention_dim, positional_dropout_rate)
+                #pos_enc_class(attention_dim, positional_dropout_rate)
             )
         elif input_layer == "conv2d":
             self.embed = Conv2dSubsampling(idim, attention_dim, dropout_rate)

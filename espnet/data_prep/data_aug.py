@@ -18,6 +18,7 @@ except:  # use this for debugging
 
 np.set_printoptions(threshold=np.inf)
 
+
 def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, dvec=True, 
     tdoa=False, gccphat=False, raw_tdoas=None, raw_gccphats=None, permute_aug=False, meeting_length=100):
     """Sub-sequence randomisation.
@@ -37,13 +38,13 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
 
     # TODO: this doesn't need to be repeated on each call.  Not urgent as not actually too slow
     valid_meeting_ids = np.array(list(segmented_meetings_dict.keys()))
-    indexes_to_remove = []
-    for i in range(len(valid_meeting_ids)):
-        if len(segmented_meetings_dict[valid_meeting_ids[i]]) <= meeting_length:
-            indexes_to_remove.append(i)
-    valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
-    if len(valid_meeting_ids) == 0:
-        raise ValueError("meeting_length must be less than length of largest meeting in dataset")
+    # indexes_to_remove = []
+    # for i in range(len(valid_meeting_ids)):
+    #     if len(segmented_meetings_dict[valid_meeting_ids[i]]) <= meeting_length:
+    #         indexes_to_remove.append(i)
+    # valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
+    # if len(valid_meeting_ids) == 0:
+    #     raise ValueError("meeting_length must be less than length of largest meeting in dataset")
     # randomly choose meeting
     random_meeting_id = np.random.choice(valid_meeting_ids)
     random_meeting = segmented_meetings_dict[random_meeting_id]
@@ -231,7 +232,7 @@ def Diaconis(batch):
         # rotate meeting.  indexed to only rotate d-vector part of vector (not tdoa/gccphat)
         batch[meeting_id][:, :dimension] = np.dot(batch[meeting_id][:, :dimension], rotation_mat)
         # # normalise variance
-        # batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
+        batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
     return batch
 
 
@@ -253,8 +254,9 @@ def produce_augmented_batch_function(args, dataset='train', batch_size=25, aug_t
         speaker label sequences in format required by ESPNet
     """
     batch_size = int(batch_size)
+    dimension = 32  # of d-vector
     # load data
-    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat)
+    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat, average=True)
 
     if tdoa_aug == True:
         if tdoa == True:
@@ -313,6 +315,7 @@ def produce_augmented_batch_function(args, dataset='train', batch_size=25, aug_t
     else:
         for meeting_id in aug_meetings:
             aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
+            aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)
 
     return aug_meetings, aug_speakers
 
@@ -336,6 +339,7 @@ def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="glob
         speaker label sequences in format required by ESPNet
     """
     batch_size = int(batch_size)
+    dimension = 32  # of d-vector
     # load data
     meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat, tdoa_norm=tdoa_norm)
 
@@ -397,6 +401,7 @@ def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="glob
         else:
             for meeting_id in aug_meetings:
                 aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
+                aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
 
         # convert aug_meetings/aug_speakers to required format for iterator class
         aug_meetings_list = []
@@ -453,8 +458,6 @@ def write_to_json(meetings, speakers, dataset, aug_type):  # for debugging and e
                 spk_dict[speaker_label] = next_num
                 next_num += 1
                 num_labels.append(str(spk_dict[speaker_label]))
-        # spk_dict = {label: str(i) for i, label in enumerate(set(labels))}
-        # labels = [spk_dict[label] for label in labels]
         output_dict["shape"] = [len(num_labels), 4+1]  # where does 4+1 come from?
         output_dict["tokenid"] = ' '.join(num_labels)
         json_dict["utts"][meeting_id] = {}
@@ -486,14 +489,18 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
     parser.add_argument('--eval-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/espnet/data_prep/eval_window_level.rttm", help='')
+    # TODO NB: changed back to segment-level
     parser.add_argument('--train-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
+    # TODO NB: changed back to segment-level
     parser.add_argument('--valid-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp", help='')
+    # TODO NB: changed back to segment-level
     parser.add_argument('--train-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/train_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
+    # TODO NB: changed back to segment-level
     parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     return parser
@@ -503,7 +510,7 @@ def main():
     """Main"""
     parser = get_parser()
     args, _ = parser.parse_known_args()
-    dataset = "train"
+    dataset = "dev"
     aug_type = "None"
     Diac = False
     meeting_length = 50
@@ -515,7 +522,7 @@ def main():
 
     meetings, speakers = produce_augmented_batch_function(args,
                                                         dataset=dataset,
-                                                        batch_size=735000,
+                                                        batch_size=18000,
                                                         aug_type=aug_type,
                                                         meeting_length=meeting_length,
                                                         Diac=Diac,

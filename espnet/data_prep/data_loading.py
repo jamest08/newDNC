@@ -203,8 +203,10 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             speaker = segment_desc[2]
             speakers.append(speaker)
             segments.append(segment)
+        assert(len(segments) == len(speakers))
         segmented_meetings_dict[meeting_id] = segments
         segmented_speakers_dict[meeting_id] = speakers
+
     return segmented_meetings_dict, segmented_speakers_dict
 
 
@@ -312,12 +314,14 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
         description="Load speech data",
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
+
+    # TODO: NB: back to segment level for debugging
     parser.add_argument('--train-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
     parser.add_argument('--valid-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
     parser.add_argument('--train-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/train_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
     parser.add_argument('--valid-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_window_level.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
@@ -329,7 +333,7 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = 'train'
 
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=True, gccphat=True, average=True)
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=True)
 
 if __name__ == '__main__':
     main()
