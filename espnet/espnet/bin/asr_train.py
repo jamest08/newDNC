@@ -320,7 +320,11 @@ def get_parser():
     parser.add_argument('--permute-aug', type=strtobool,
             default=False, help='whether to use permutation augmentation on tdoa/gccphat')
     parser.add_argument('--tdoa-norm', type=strtobool,
-            default=False, help='whether to normalise TDOA/GCC-PHAT values')            
+            default=False, help='whether to normalise TDOA/GCC-PHAT values')  
+    parser.add_argument('--diac', type=strtobool,
+            default=True, help='whether to use Diaconis augmentation')
+    parser.add_argument('--dvec-aug', type=str,
+            default="None", help='which augmentation to use on d-vectors')            
     return parser
 
 

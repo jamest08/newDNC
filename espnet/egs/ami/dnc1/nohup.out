@@ -1,0 +1,13 @@
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_nonenodiac/train.log
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_meetingnodiac/train.log
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_globalwdiac/train.log
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_globalnodiac/train.log
+stage 4: Network Training
+stage 4: Network Training

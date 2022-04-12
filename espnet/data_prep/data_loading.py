@@ -110,6 +110,7 @@ def build_meeting_dvec_dict(args, dataset, split=False, tdoa=False, gccphat=Fals
     :param: Bool split: splits segments longer than 2s if True
     :return: dict meeting_dvec_dict[meeting_id] = {speaker_label: List[dvector]}
     """
+    print("Building meeting_dvec_dict")
     scp_path, rttm_path = get_file_paths(args, dataset)
     meeting_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)

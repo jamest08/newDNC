@@ -410,32 +410,30 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    valid_batch_size = 50  # should this be the same as 
-    train_batch_size = 50
     meeting_length = 50  # roughly equivalent to 50 segments
 
     print("Initialising train_generator")
     train_generator = produce_augmented_batch(
                         args,
                         dataset="train",
-                        batch_size=train_batch_size,
-                        aug_type="None",
+                        batch_size=args.batch_size,
+                        aug_type=args.dvec_aug,
                         meeting_length=meeting_length,
-                        Diac=True,
+                        Diac=args.diac,
                         dvec=args.dvec,
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,
                         tdoa_aug=args.tdoa_aug,
                         permute_aug=args.permute_aug,
                         tdoa_norm=args.tdoa_norm)
-    train_iter = OnTheFlyIterator(train_generator, train_batch_size)
+    train_iter = OnTheFlyIterator(train_generator, args.batch_size)
     train_iter = {'main': train_iter}
 
 
     valid_generator = produce_augmented_batch(
                         args,
                         dataset="dev",
-                        batch_size=valid_batch_size,
+                        batch_size=args.batch_size,
                         aug_type="None",
                         meeting_length=meeting_length,
                         Diac=False,
@@ -445,7 +443,7 @@ def train(args):
                         tdoa_aug=False,
                         permute_aug=False,
                         tdoa_norm=args.tdoa_norm)
-    valid_iter = OnTheFlyIterator(valid_generator, valid_batch_size, repeat=False, shuffle=False)
+    valid_iter = OnTheFlyIterator(valid_generator, args.batch_size, repeat=False, shuffle=False)
     valid_iter = {'main': valid_iter}
 
     # Set up a trainer

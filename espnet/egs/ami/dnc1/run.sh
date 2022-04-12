@@ -41,6 +41,8 @@ gccphat=
 tdoa_aug=
 permute_aug=
 tdoa_norm=
+diac=
+dvec_aug=
 
 train_config=conf/tuning/train_transformer.yaml
 decode_config=conf/decode.yaml
@@ -132,7 +134,9 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --gccphat ${gccphat} \
         --tdoa-aug ${tdoa_aug} \
         --permute-aug ${permute_aug} \
-        --tdoa-norm ${tdoa_norm}
+        --tdoa-norm ${tdoa_norm} \
+        --diac ${diac} \
+        --dvec-aug ${dvec_aug}
         # --train-scp ${train_scp} \
         # --valid-scp ${valid_scp} \
         # --train-rttm ${train_rttm} \

@@ -20,7 +20,7 @@ np.set_printoptions(threshold=np.inf)
 
 
 def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, dvec=True, 
-    tdoa=False, gccphat=False, raw_tdoas=None, raw_gccphats=None, permute_aug=False, meeting_length=100):
+    tdoa=False, gccphat=False, raw_tdoas=None, raw_gccphats=None, permute_aug=False, meeting_length=100, batch_size=50):
     """Sub-sequence randomisation.
        Randomly chooses a real meeting and samples a sub_meeting at segment boundaries.
 
@@ -34,54 +34,62 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
        :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
        :return: List[str] augmented_speaker: the new, augmented sequence of speaker labels
     """
-    # ensure chosen meeting is longer than required sub-sample length (meeting_length)
+    # Two dictionaries with key as new meeting_id
+    aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
+    aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
+    for i in range(batch_size):
+        aug_meeting_id = "AMI-AUG_" + str(i)
 
-    # TODO: this doesn't need to be repeated on each call.  Not urgent as not actually too slow
-    valid_meeting_ids = np.array(list(segmented_meetings_dict.keys()))
-    # indexes_to_remove = []
-    # for i in range(len(valid_meeting_ids)):
-    #     if len(segmented_meetings_dict[valid_meeting_ids[i]]) <= meeting_length:
-    #         indexes_to_remove.append(i)
-    # valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
-    # if len(valid_meeting_ids) == 0:
-    #     raise ValueError("meeting_length must be less than length of largest meeting in dataset")
-    # randomly choose meeting
-    random_meeting_id = np.random.choice(valid_meeting_ids)
-    random_meeting = segmented_meetings_dict[random_meeting_id]
+        # ensure chosen meeting is longer than required sub-sample length (meeting_length)
+        # TODO: only needed for meetings longer than 72 segs
+        valid_meeting_ids = np.array(list(segmented_meetings_dict.keys()))
+        # indexes_to_remove = []
+        # for i in range(len(valid_meeting_ids)):
+        #     if len(segmented_meetings_dict[valid_meeting_ids[i]]) <= meeting_length:
+        #         indexes_to_remove.append(i)
+        # valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
+        # if len(valid_meeting_ids) == 0:
+        #     raise ValueError("meeting_length must be less than length of largest meeting in dataset")
+        # randomly choose meeting
+        random_meeting_id = np.random.choice(valid_meeting_ids)
+        random_meeting = segmented_meetings_dict[random_meeting_id]
 
-    # randomly choose starting index (ie. starting segment)
-    max_start_idx = len(random_meeting) - meeting_length
-    random_start_idx = np.random.choice(max_start_idx+1)
-    end_idx = random_start_idx + meeting_length - 1
-    # produce sub-meeting
-    augmented_meeting = random_meeting[random_start_idx:end_idx+1]
+        # randomly choose starting index (ie. starting segment)
+        max_start_idx = len(random_meeting) - meeting_length
+        random_start_idx = np.random.choice(max_start_idx+1)
+        end_idx = random_start_idx + meeting_length - 1
+        # produce sub-meeting
+        augmented_meeting = random_meeting[random_start_idx:end_idx+1]
 
-    # if tdoa, also augment those values by doing a random average across each segment:
-    if raw_tdoas != None and tdoa == True:
-        # find first index of tdoa vector
-        tdoa_pos = 32*dvec
-        meeting_tdoas = raw_tdoas[random_meeting_id]
-        submeeting_tdoas = meeting_tdoas[random_start_idx:end_idx+1]
-        for segment_idx, segment_tdoas in enumerate(submeeting_tdoas):
-            aug_segment_tdoas = random_average(segment_tdoas)
-            augmented_meeting[segment_idx][tdoa_pos:tdoa_pos+7] = aug_segment_tdoas
+        # if tdoa, also augment those values by doing a random average across each segment:
+        if raw_tdoas != None and tdoa == True:
+            # find first index of tdoa vector
+            tdoa_pos = 32*dvec
+            meeting_tdoas = raw_tdoas[random_meeting_id]
+            submeeting_tdoas = meeting_tdoas[random_start_idx:end_idx+1]
+            for segment_idx, segment_tdoas in enumerate(submeeting_tdoas):
+                aug_segment_tdoas = random_average(segment_tdoas)
+                augmented_meeting[segment_idx][tdoa_pos:tdoa_pos+7] = aug_segment_tdoas
 
-    # if gccphat, also augment those values by doing a random average across each segment:
-    if raw_gccphats != None and gccphat == True:
-        # find first index of gccphat vector
-        gccphat_pos = 32*dvec + 7*tdoa
-        meeting_gccphats = raw_gccphats[random_meeting_id]
-        submeeting_gccphats = meeting_gccphats[random_start_idx:end_idx+1]
-        for segment_idx, segment_gccphats in enumerate(submeeting_gccphats):
-            aug_segment_gccphats = random_average(segment_gccphats)
-            augmented_meeting[segment_idx][gccphat_pos:gccphat_pos+7] = aug_segment_gccphats
+        # if gccphat, also augment those values by doing a random average across each segment:
+        if raw_gccphats != None and gccphat == True:
+            # find first index of gccphat vector
+            gccphat_pos = 32*dvec + 7*tdoa
+            meeting_gccphats = raw_gccphats[random_meeting_id]
+            submeeting_gccphats = meeting_gccphats[random_start_idx:end_idx+1]
+            for segment_idx, segment_gccphats in enumerate(submeeting_gccphats):
+                aug_segment_gccphats = random_average(segment_gccphats)
+                augmented_meeting[segment_idx][gccphat_pos:gccphat_pos+7] = aug_segment_gccphats
 
-    if permute_aug == True:
-        augmented_meeting = permute_tdoa_gccphat(np.array(augmented_meeting, dtype=np.float32), dvec)
+        if permute_aug == True:
+            augmented_meeting = permute_tdoa_gccphat(np.array(augmented_meeting, dtype=np.float32), dvec)
 
-    augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
+        augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
 
-    return augmented_meeting, augmented_speakers
+        aug_meetings[aug_meeting_id] = augmented_meeting
+        aug_speakers[aug_meeting_id] = augmented_speakers
+
+    return aug_meetings, aug_speakers
 
 
 def random_average(vector_list, min_vectors_frac=0.8):
@@ -120,7 +128,7 @@ def permute_tdoa_gccphat(meeting, dvec=True):
     return meeting
 
 
-def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length=50):
+def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meeting_length, batch_size):
     """Global input vectors randomisation.
         Randomly sample a sequence of speaker labels.  For each label assign a speaker identity from
         any meeting.  For each segment in the sequence, sample a random d-vector from that speaker.
@@ -132,39 +140,48 @@ def global_speaker_randomisation(global_dvec_dict, segmented_speakers_dict, meet
         :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
         :return: List[str] random_speaker_seq: the new, augmented sequence of speaker labels
     """
+    # Two dictionaries with key as new meeting_id
+    aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
+    aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
     # each entry in array is list of speakers in a meeting
     speaker_labels_array = np.array(list(segmented_speakers_dict.values()), dtype=list)
-    # choose random sequence of speaker labels
-    random_speaker_seq = np.random.choice(speaker_labels_array)
-    # randomly truncate sequence to meeting length (effectively sub-meeting randomisation)
-    if meeting_length < len(random_speaker_seq):
-        start_index = np.random.choice(len(random_speaker_seq) - meeting_length + 1)
-        end_index = start_index + meeting_length - 1
-        random_speaker_seq = random_speaker_seq[start_index:end_index+1]
-    else:  # TODO: this needs to be improved. just for testing.  shortest train meeting is 71
-        print("shorter meeting returned")
-    # create set of current unique speakers in sequence
-    current_speakers = set(random_speaker_seq)
-    # create set of all unique speakers available
-    all_speakers = set(global_dvec_dict.keys())
-    # create dictionary mapping current speakers to new speakers
-    speaker_mapping = {}
-    for current_speaker in current_speakers:
-        new_speaker = np.random.choice(list(all_speakers))
-        all_speakers.remove(new_speaker)  # prevents same new speaker being chosen twice
-        speaker_mapping[current_speaker] = new_speaker
-    # update speaker sequence with new speakers
-    random_speaker_seq = [speaker_mapping[current_speaker] for current_speaker in random_speaker_seq]
-    # create new meeting from label sequence, sampling random d-vectors from each speaker
-    augmented_meeting = []
-    for speaker in random_speaker_seq:
-        random_idx = np.random.choice(len(global_dvec_dict[speaker]))
-        random_dvec = global_dvec_dict[speaker][random_idx]
-        augmented_meeting.append(random_dvec)
-    return augmented_meeting, random_speaker_seq
+    for i in range(batch_size):
+        aug_meeting_id = "AMI-AUG_" + str(i)
+        # choose random sequence of speaker labels
+        random_speaker_seq = np.random.choice(speaker_labels_array)
+        # randomly truncate sequence to meeting length (effectively sub-meeting randomisation)
+        if meeting_length < len(random_speaker_seq):
+            start_index = np.random.choice(len(random_speaker_seq) - meeting_length + 1)
+            end_index = start_index + meeting_length - 1
+            random_speaker_seq = random_speaker_seq[start_index:end_index+1]
+        else:  # TODO: this needs to be improved. just for testing.  shortest train meeting is 71
+            print("shorter meeting returned")
+        # create set of current unique speakers in sequence
+        current_speakers = set(random_speaker_seq)
+        # create set of all unique speakers available
+        all_speakers = set(global_dvec_dict.keys())
+        # create dictionary mapping current speakers to new speakers
+        speaker_mapping = {}
+        for current_speaker in current_speakers:
+            new_speaker = np.random.choice(list(all_speakers))
+            all_speakers.remove(new_speaker)  # prevents same new speaker being chosen twice
+            speaker_mapping[current_speaker] = new_speaker
+        # update speaker sequence with new speakers
+        random_speaker_seq = [speaker_mapping[current_speaker] for current_speaker in random_speaker_seq]
+        # create new meeting from label sequence, sampling random d-vectors from each speaker
+        augmented_meeting = []
+        for speaker in random_speaker_seq:
+            random_idx = np.random.choice(len(global_dvec_dict[speaker]))
+            random_dvec = global_dvec_dict[speaker][random_idx]
+            augmented_meeting.append(random_dvec)
+
+        aug_meetings[aug_meeting_id] = augmented_meeting
+        aug_speakers[aug_meeting_id] = random_speaker_seq
+
+    return aug_meetings, aug_speakers
 
 
-def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, meeting_length):
+def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, meeting_length, four_speaker_meeting_ids, batch_size):
     """Meeting input vectors randomisation.
         Randomly sample a sequence of speaker labels.  Randomly choose a meeting with at least that
         number of speakers.  For each label assign a speaker identity from the chosen meeting.  For
@@ -177,45 +194,53 @@ def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, me
         :return: List[dvectors] augmented_meeting: the new, augmented meeting (dvector sequence)
         :return: List[str] random_speaker_seq: the new, augmented sequence of speaker labels
     """
+    # Two dictionaries with key as new meeting_id
+    aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
+    aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
     # each entry in array is list of speakers in a meeting
     speaker_labels_array = np.array(list(segmented_speakers_dict.values()), dtype=list)
-    # choose random sequence of speaker labels
-    random_speaker_seq = np.random.choice(speaker_labels_array)
-    # randomly truncate sequence to meeting length (effectively sub meeting randomisation)
-    if meeting_length < len(random_speaker_seq):
-        start_index = np.random.choice(len(random_speaker_seq) - meeting_length + 1)
-        end_index = start_index + meeting_length - 1
-        random_speaker_seq = random_speaker_seq[start_index:end_index+1]
-    else:  # TODO: this needs to be improved. just for testing. shortest train meeting is 71
-        print("shorter meeting returned")
-    # choose meeting to sample from, ensure it has at least the same number of speakers
-    num_speakers = len(set(random_speaker_seq))
-    valid_meeting_ids = np.array(list(meeting_dvec_dict.keys()))
-    indexes_to_remove = []
-    for i, meeting_id in enumerate(valid_meeting_ids):  #TODO: this only needs to be done once
-        if len(set(segmented_speakers_dict[meeting_id])) < num_speakers:
-            indexes_to_remove.append(i)
-    valid_meeting_ids = np.delete(valid_meeting_ids, indexes_to_remove)
-    random_meeting_id = np.random.choice(valid_meeting_ids)
-    # create set of current unique speakers in sequence
-    current_speakers = set(random_speaker_seq)
-    # create set of unique speakers available from new meeting
-    new_speakers = set(segmented_speakers_dict[random_meeting_id])
-    # create dictionary mapping current speakers to new speakers
-    speaker_mapping = {}
-    for current_speaker in current_speakers:
-        new_speaker = np.random.choice(list(new_speakers))
-        new_speakers.remove(new_speaker)  # prevents same new speaker being chosen twice
-        speaker_mapping[current_speaker] = new_speaker
-    # update speaker sequence with new speakers
-    random_speaker_seq = [speaker_mapping[current_speaker] for current_speaker in random_speaker_seq]
-    # create new meeting from label sequence, sampling random d-vectors from each speaker
-    augmented_meeting = []
-    for speaker in random_speaker_seq:
-        random_idx = np.random.choice(len(meeting_dvec_dict[random_meeting_id][speaker]))
-        random_dvec = meeting_dvec_dict[random_meeting_id][speaker][random_idx]
-        augmented_meeting.append(random_dvec)
-    return augmented_meeting, random_speaker_seq
+    for i in range(batch_size):
+        aug_meeting_id = "AMI-AUG_" + str(i)
+        # choose random sequence of speaker labels
+        random_speaker_seq = np.random.choice(speaker_labels_array)
+        # randomly truncate sequence to meeting length (effectively sub meeting randomisation)
+        if meeting_length < len(random_speaker_seq):
+            start_index = np.random.choice(len(random_speaker_seq) - meeting_length + 1)
+            end_index = start_index + meeting_length - 1
+            random_speaker_seq = random_speaker_seq[start_index:end_index+1]
+        else:  # TODO: this needs to be improved. just for testing. shortest train meeting is 71
+            print("shorter meeting returned")
+
+        # choose meeting to sample from, ensure it has at least the same number of speakers (train set meetings have 3 or 4)
+        if len(set(random_speaker_seq)) == 4:
+            valid_meeting_ids = np.array(four_speaker_meeting_ids)
+        else:
+            valid_meeting_ids = np.array(list(meeting_dvec_dict.keys()))
+
+        random_meeting_id = np.random.choice(valid_meeting_ids)
+        # create set of current unique speakers in sequence
+        current_speakers = set(random_speaker_seq)
+        # create set of unique speakers available from new meeting
+        new_speakers = set(segmented_speakers_dict[random_meeting_id])
+        # create dictionary mapping current speakers to new speakers
+        speaker_mapping = {}
+        for current_speaker in current_speakers:
+            new_speaker = np.random.choice(list(new_speakers))
+            new_speakers.remove(new_speaker)  # prevents same new speaker being chosen twice
+            speaker_mapping[current_speaker] = new_speaker
+        # update speaker sequence with new speakers
+        random_speaker_seq = [speaker_mapping[current_speaker] for current_speaker in random_speaker_seq]
+        # create new meeting from label sequence, sampling random d-vectors from each speaker
+        augmented_meeting = []
+        for speaker in random_speaker_seq:
+            random_idx = np.random.choice(len(meeting_dvec_dict[random_meeting_id][speaker]))
+            random_dvec = meeting_dvec_dict[random_meeting_id][speaker][random_idx]
+            augmented_meeting.append(random_dvec)
+
+        aug_meetings[aug_meeting_id] = augmented_meeting
+        aug_speakers[aug_meeting_id] = random_speaker_seq
+
+    return aug_meetings, aug_speakers
 
 
 def Diaconis(batch):
@@ -231,97 +256,13 @@ def Diaconis(batch):
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting.  indexed to only rotate d-vector part of vector (not tdoa/gccphat)
         batch[meeting_id][:, :dimension] = np.dot(batch[meeting_id][:, :dimension], rotation_mat)
-        # # normalise variance
+        # normalise variance
         batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
     return batch
 
 
-def produce_augmented_batch_function(args, dataset='train', batch_size=25, aug_type="global", meeting_length=100,
-     Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False):  # generator version as used in on-the-fly
-    """Generator to produce mini-batches of augmented data for training.
-       The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
-
-       :param: str dataset: "train", "dev", or "eval"
-       :param: int batch_size: number of augmented meetings to produce
-       :param: str aug_type: "global", "meeting" or "None" (randomisation type)
-       :param: int meeting_length: number of segments in each augmented meeting
-       :param: Bool Diac: performs Diaconis augmentation on top of batch if True
-       :param: Bool dvec: include d-vectors in input vector
-       :param: Bool tdoa: include tdoa in input vector
-       :param: Bool gcc-phat: include gcc-phat in input vector
-       :param: Bool tdoa_aug: perform averaging augmentation on tdoa/gcc-phat
-       :yield: List[Tuple[List[List[dvectors]], List[List[str]]]]  batch of augmented meetings and 
-        speaker label sequences in format required by ESPNet
-    """
-    batch_size = int(batch_size)
-    dimension = 32  # of d-vector
-    # load data
-    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat, average=True)
-
-    if tdoa_aug == True:
-        if tdoa == True:
-            raw_tdoas, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=True, gccphat=False, average=False)
-        else:
-            raw_tdoas = None
-        if gccphat == True:
-            raw_gccphats, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=False, gccphat=True, average=False)
-        else:
-            raw_gccphats = None
-    else:
-        raw_tdoas = None
-        raw_gccphats = None
-
-    if aug_type == "global":
-        global_dvec_dict = build_global_dvec_dict(args, dataset)
-    elif aug_type == "meeting":
-        meeting_dvec_dict = build_meeting_dvec_dict(args, dataset)
-
-    # Two dictionaries with key as new meeting_id
-    aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
-    aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
-
-    # if sub-meeting
-    if aug_type == "None":
-        for i in range(batch_size):
-            aug_meeting_id = "AMI-AUG_" + str(i)
-            # TODO: move for loops to function so don't have to repeat some lines
-            aug_meeting, aug_speaker = sub_meeting_augmentation(meetings_dict,
-                    speakers_dict, dvec=dvec, raw_tdoas=raw_tdoas, raw_gccphats=raw_gccphats, tdoa=tdoa, gccphat=gccphat, permute_aug=permute_aug, meeting_length=meeting_length)
-            aug_meetings[aug_meeting_id] = aug_meeting
-            aug_speakers[aug_meeting_id] = aug_speaker
-        
-    elif aug_type == "global":
-        for i in range(batch_size):
-            aug_meeting_id = "AMI-AUG_" + str(i)
-            aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
-                                                    speakers_dict, meeting_length)
-            aug_meetings[aug_meeting_id] = aug_meeting
-            aug_speakers[aug_meeting_id] = aug_speaker
-
-    elif aug_type == "meeting":
-        for i in range(batch_size):
-            aug_meeting_id = "AMI-AUG_" + str(i)
-            aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
-                                                        speakers_dict, meeting_length)
-            aug_meetings[aug_meeting_id] = aug_meeting
-            aug_speakers[aug_meeting_id] = aug_speaker
-
-    else:
-        raise ValueError("Invalid aug_type")
-
-    # do Diac aug on entire batch
-    if Diac == True and dvec == True:
-        aug_meetings = Diaconis(aug_meetings)
-    else:
-        for meeting_id in aug_meetings:
-            aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
-            aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)
-
-    return aug_meetings, aug_speakers
-
-
-def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="global", meeting_length=100,
-        num_batches=int(1e10), Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False, tdoa_norm=False):  # generator version as used in on-the-fly
+def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="global", meeting_length=50,
+            Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False, tdoa_norm=False):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
 
@@ -361,36 +302,21 @@ def produce_augmented_batch(args, dataset='train', batch_size=25, aug_type="glob
     elif aug_type == "meeting":
         meeting_dvec_dict = build_meeting_dvec_dict(args, dataset)
 
-    for _ in range(num_batches):
-        # Two dictionaries with key as new meeting_id
-        aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
-        aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
+    four_speaker_meeting_ids = [meeting_id for meeting_id in speakers_dict if len(set(speakers_dict[meeting_id])) == 4]
 
-        # if sub-meeting
+    while True:
         if aug_type == "None":
-            for i in range(batch_size):
-                aug_meeting_id = "AMI-AUG_" + str(i)
-                # TODO: move for loops to function so don't have to repeat some lines
-                aug_meeting, aug_speaker = sub_meeting_augmentation(meetings_dict,
-                        speakers_dict, dvec=dvec, raw_tdoas=raw_tdoas, raw_gccphats=raw_gccphats, tdoa=tdoa, gccphat=gccphat, permute_aug=permute_aug, meeting_length=meeting_length)
-                aug_meetings[aug_meeting_id] = aug_meeting
-                aug_speakers[aug_meeting_id] = aug_speaker
+            aug_meetings, aug_speakers = sub_meeting_augmentation(meetings_dict,
+                    speakers_dict, dvec=dvec, raw_tdoas=raw_tdoas, raw_gccphats=raw_gccphats, tdoa=tdoa,
+                    gccphat=gccphat, permute_aug=permute_aug, meeting_length=meeting_length, batch_size=batch_size)
             
         elif aug_type == "global":
-            for i in range(batch_size):
-                aug_meeting_id = "AMI-AUG_" + str(i)
-                aug_meeting, aug_speaker = global_speaker_randomisation(global_dvec_dict,
-                                                       speakers_dict, meeting_length)
-                aug_meetings[aug_meeting_id] = aug_meeting
-                aug_speakers[aug_meeting_id] = aug_speaker
+            aug_meetings, aug_speakers = global_speaker_randomisation(global_dvec_dict,
+                                                       speakers_dict, meeting_length, batch_size)
 
         elif aug_type == "meeting":
-            for i in range(batch_size):
-                aug_meeting_id = "AMI-AUG_" + str(i)
-                aug_meeting, aug_speaker = meeting_speaker_randomisation(meeting_dvec_dict,
-                                                          speakers_dict, meeting_length)
-                aug_meetings[aug_meeting_id] = aug_meeting
-                aug_speakers[aug_meeting_id] = aug_speaker
+            aug_meetings, aug_speakers = meeting_speaker_randomisation(meeting_dvec_dict,
+                                        speakers_dict, meeting_length, four_speaker_meeting_ids, batch_size)
 
         else:
             raise ValueError("Invalid aug_type")
@@ -520,21 +446,21 @@ def main():
     tdoa_aug = False
     permute_aug = False
 
-    meetings, speakers = produce_augmented_batch_function(args,
-                                                        dataset=dataset,
-                                                        batch_size=18000,
-                                                        aug_type=aug_type,
-                                                        meeting_length=meeting_length,
-                                                        Diac=Diac,
-                                                        dvec=dvec,
-                                                        tdoa=tdoa,
-                                                        gccphat=gccphat,
-                                                        tdoa_aug=tdoa_aug,
-                                                        permute_aug=permute_aug)
+    # meetings, speakers = produce_augmented_batch_function(args,
+    #                                                     dataset=dataset,
+    #                                                     batch_size=18000,
+    #                                                     aug_type=aug_type,
+    #                                                     meeting_length=meeting_length,
+    #                                                     Diac=Diac,
+    #                                                     dvec=dvec,
+    #                                                     tdoa=tdoa,
+    #                                                     gccphat=gccphat,
+    #                                                     tdoa_aug=tdoa_aug,
+    #                                                     permute_aug=permute_aug)
 
 
-    write_to_ark(meetings, dataset, aug_type)
-    write_to_json(meetings, speakers, dataset, aug_type)
+    # write_to_ark(meetings, dataset, aug_type)
+    # write_to_json(meetings, speakers, dataset, aug_type)
 
 
 if __name__ == '__main__':
