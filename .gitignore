@@ -6,3 +6,4 @@ __pycache__
 ._*
 .vscode
 espnet/egs/ami/dnc1/exp/
+espnet/egs/ami/dnc1/cmd.sh
