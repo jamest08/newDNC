@@ -162,7 +162,6 @@ class CustomUpdater(training.StandardUpdater):
 
         # Get the next batch ( a list of json files)
         batch = train_iter.next()
-        print(batch)
         
         # self.iteration += 1
 
