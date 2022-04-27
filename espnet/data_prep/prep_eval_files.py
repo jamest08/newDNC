@@ -88,12 +88,12 @@ def get_parser():  # official paths should be maintained in asr_train.py
     parser.add_argument('--eval-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
     parser.add_argument('--eval-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/eval_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     parser.add_argument('--valid-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
     # note there are two dev window level rttms.  Here using the silence stripped version
     parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_scoring_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/dev50_window_level.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     return parser
@@ -109,7 +109,7 @@ def main():
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 
-    meeting_length = 100
+    meeting_length = 101
 
     segment_desc_dict = build_segment_desc_dict(rttm_path)
     produce_eval_scp(meetings, speakers, segment_desc_dict, dataset)

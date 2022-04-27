@@ -162,6 +162,7 @@ class CustomUpdater(training.StandardUpdater):
 
         # Get the next batch ( a list of json files)
         batch = train_iter.next()
+        print(batch)
         
         # self.iteration += 1
 
@@ -410,15 +411,13 @@ def train(args):
 
     use_sortagrad = args.sortagrad == -1 or args.sortagrad > 0
 
-    meeting_length = 50  # roughly equivalent to 50 segments
-
     print("Initialising train_generator")
     train_generator = produce_augmented_batch(
                         args,
                         dataset="train",
                         batch_size=args.batch_size,
                         aug_type=args.dvec_aug,
-                        meeting_length=meeting_length,
+                        meeting_length=args.meeting_length,
                         Diac=args.diac,
                         dvec=args.dvec,
                         tdoa=args.tdoa,
@@ -435,7 +434,7 @@ def train(args):
                         dataset="dev",
                         batch_size=args.batch_size,
                         aug_type="None",
-                        meeting_length=meeting_length,
+                        meeting_length=args.meeting_length,
                         Diac=False,
                         dvec=args.dvec,
                         tdoa=args.tdoa,

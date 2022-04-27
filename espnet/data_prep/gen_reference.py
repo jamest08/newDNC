@@ -5,7 +5,7 @@ from collections import defaultdict
 
 from data_loading import build_segment_desc_dict
 
-def produce_eval_reference(evaldnc_path, refoutputeval_path, sub_meeting_length=100):
+def produce_eval_reference(evaldnc_path, refoutputeval_path):
     """Takes in refoutputeval.rttm and produces reference.rttm ensuring there are splits at meeting
     boundaries in eval.json/evaldnc.rttm"""
 

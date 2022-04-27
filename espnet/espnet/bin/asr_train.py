@@ -296,18 +296,6 @@ def get_parser():
     parser.add_argument('--rotate', type=strtobool, default=False,
                         help='set to use Diaconis augmentation')
 
-    # paths
-    parser.add_argument('--train-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
-    parser.add_argument('--valid-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.concat/dev.scp", help='')
-    parser.add_argument('--train-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
-    parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
-    parser.add_argument('--tdoa-directory', type=str,
-            default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
-
     # aug args
     parser.add_argument('--dvec', type=strtobool,
             default=True, help='whether to include dvectors in input')
@@ -324,7 +312,22 @@ def get_parser():
     parser.add_argument('--diac', type=strtobool,
             default=True, help='whether to use Diaconis augmentation')
     parser.add_argument('--dvec-aug', type=str,
-            default="None", help='which augmentation to use on d-vectors')            
+            default="None", help='which augmentation to use on d-vectors')
+    parser.add_argument('--meeting-length', type=int,
+            default=50, help='number of segments/windows per meeting')     
+
+    # paths
+    parser.add_argument('--train-scp', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
+    parser.add_argument('--valid-scp', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+    parser.add_argument('--train-rttm', type=str,
+            default=None, help='')
+    parser.add_argument('--valid-rttm', type=str,
+            default=None, help='')
+    parser.add_argument('--tdoa-directory', type=str,
+            default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
+   
     return parser
 
 

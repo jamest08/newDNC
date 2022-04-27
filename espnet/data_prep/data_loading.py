@@ -199,8 +199,8 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             if average == True:
                 segment = np.mean(segment, axis=0)
             # only L2-normalise dvec part
-            if dvec == True:
-                segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
+            # if dvec == True:
+            #     segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
             speaker = segment_desc[2]
             speakers.append(speaker)
             segments.append(segment)
@@ -321,10 +321,14 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
             default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
     parser.add_argument('--valid-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+    parser.add_argument('--eval-scp', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/arks.concat/eval.scp", help='')
     parser.add_argument('--train-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
     parser.add_argument('--valid-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/espnet/data_prep/dev_window_level.rttm", help='')
+    parser.add_argument('--eval-rttm', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     return parser
@@ -332,9 +336,16 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
 def main():
     parser = get_parser()
     args, _ = parser.parse_known_args()
-    dataset = 'train'
+    dataset = 'eval'
 
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=True)
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat=False, average=False)
+
+    segment_lengths = []
+    for meeting_id in meetings:
+        for segment in meetings[meeting_id]:
+            segment_lengths.append(len(segment))
+
+    print('average dvectors per segment: ', np.mean(segment_lengths))
 
 if __name__ == '__main__':
     main()

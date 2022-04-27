@@ -6,9 +6,9 @@ from collections import defaultdict
 
 from data_loading import build_segment_desc_dict
 
-dataset = "dev"
-#rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/test_%s.rttm" % dataset
-rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/ss_dev.rttm"
+dataset = "eval"
+# use silence stripped rttms for dev, eval (ss_{dataset}.rttm)
+rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/ss_eval.rttm"
 
 if dataset == 'eval' or dataset == 'dev':
     filt = False  # important not to filter segments so timings stay correct to avoid missed speech
@@ -37,7 +37,7 @@ happening at each stage and so is easy to edit.
 
 new_segments_desc_dict = defaultdict(list)
 frames_per_dvector = 15  # the number of frames used to generate one d-vector
-desired_window_length = 100
+desired_window_length = 200
 
 # first just establishing window start and end indices
 for meeting_id, meeting in segment_desc_dict.items():
@@ -146,7 +146,7 @@ for meeting_id, meeting in segment_desc_dict.items():
 
 
 # write to rttm
-with open(dataset + "_scoring_window_level.rttm", "w") as rttm_file:
+with open(dataset + str(desired_window_length) + "_window_level.rttm", "w") as rttm_file:
     for meeting_id, meeting in new_segments_desc_dict.items():
         for segment in meeting:
             rttm_file.write("SPEAKER " + meeting_id + ' 1 ' + str(segment[3]) + ' ' + 

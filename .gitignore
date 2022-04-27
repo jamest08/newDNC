@@ -5,3 +5,4 @@ __pycache__
 .DS_Store
 ._*
 .vscode
+espnet/egs/ami/dnc1/exp/
