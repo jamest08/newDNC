@@ -16,3 +16,4 @@ queue.pl: Error, unfinished job no longer exists, log is in exp/mdm_train_pytorc
 Possible reasons: a) Exceeded time limit? -> Use more jobs! b) Shutdown/Frozen machine? -> Run again!  Qmaster output was: Following jobs do not exist: 
 6188091
 
+./run.sh: line 142: train_scp: unbound variable
