@@ -199,8 +199,8 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             if average == True:
                 segment = np.mean(segment, axis=0)
             # only L2-normalise dvec part
-            # if dvec == True:
-            #     segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
+            if dvec == True:
+                segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
             speaker = segment_desc[2]
             speakers.append(speaker)
             segments.append(segment)

@@ -17,3 +17,18 @@ Possible reasons: a) Exceeded time limit? -> Use more jobs! b) Shutdown/Frozen m
 6188091
 
 ./run.sh: line 142: train_scp: unbound variable
+stage 4: Network Training
+queue.pl: job failed with status 2, log is in exp/mdm_train_pytorch_nonenodiac100window/train.log
+stage 4: Network Training
+stage 4: Network Training
+queue.pl: job failed with status 2, log is in exp/mdm_train_pytorch_meetingnodiac100window/train.log
+queue.pl: job failed with status 2, log is in exp/mdm_train_pytorch_globalnodiac100window/train.log
+stage 4: Network Training
+queue.pl: job failed with status 2, log is in exp/mdm_train_pytorch_globalwdiac100window/train.log
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
