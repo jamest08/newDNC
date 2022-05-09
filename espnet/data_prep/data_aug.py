@@ -92,7 +92,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
     return aug_meetings, aug_speakers
 
 
-def random_average(vector_list, min_vectors_frac=0.8):
+def random_average(vector_list, min_vectors_frac=0.7):
     """Average a list of of vectors using a random subset of them
     Used to augment tdoa/gccphat part of input vector.
 
@@ -327,7 +327,8 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
         else:
             for meeting_id in aug_meetings:
                 aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
-                aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
+                if dvec == True:
+                    aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
 
         # convert aug_meetings/aug_speakers to required format for iterator class
         aug_meetings_list = []
