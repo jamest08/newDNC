@@ -3,11 +3,11 @@
         "AMI-0IS1009b-001": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:644793",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1468977",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -25,11 +25,11 @@
         "AMI-0IS1009b-002": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:650481",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1481937",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -47,11 +47,11 @@
         "AMI-0IS1009b-003": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:656169",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1494897",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -69,11 +69,11 @@
         "AMI-0IS1009b-004": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:661857",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1507857",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -91,11 +91,11 @@
         "AMI-0IS1009b-005": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:667545",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1520817",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -113,11 +113,11 @@
         "AMI-0IS1009b-006": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:673233",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1533777",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -135,11 +135,11 @@
         "AMI-0IS1009b-007": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:678921",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1546737",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -157,11 +157,11 @@
         "AMI-0IS1009b-008": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:684609",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1559697",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -179,11 +179,11 @@
         "AMI-0IS1009b-009": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:690297",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1572657",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -201,11 +201,11 @@
         "AMI-0IS1009b-010": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:695985",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1585617",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -223,11 +223,11 @@
         "AMI-0IS1009b-011": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:701673",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1598577",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -245,11 +245,11 @@
         "AMI-0IS1009b-012": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:707361",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1611537",
                     "name": "input1",
                     "shape": [
                         101,
-                        14
+                        32
                     ]
                 }
             ],
@@ -267,11 +267,11 @@
         "AMI-0IS1009b-013": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:713049",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1624497",
                     "name": "input1",
                     "shape": [
                         5,
-                        14
+                        32
                     ]
                 }
             ],

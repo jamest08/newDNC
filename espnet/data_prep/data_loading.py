@@ -201,6 +201,9 @@ def build_segment_dicts(args, dataset, filt=True, dvec=True, tdoa=False, gccphat
             # only L2-normalise dvec part
             if dvec == True:
                 segment[:dvec_dim] = segment[:dvec_dim]/np.linalg.norm(segment[:dvec_dim])
+                # only do variance normalisation here for eval as otherwise done in data_aug.py
+                if dataset == 'eval':
+                    segment[:dvec_dim] *= np.sqrt(dvec_dim)
             speaker = segment_desc[2]
             speakers.append(speaker)
             segments.append(segment)
