@@ -6,6 +6,7 @@ import kaldiio
 import numpy as np
 from collections import defaultdict
 import os
+from copy import deepcopy
 
 from torch import float32
 import configargparse
@@ -31,6 +32,7 @@ def build_segment_desc_dict(rttm_path, filt=True):
     start_time, end_time, duration))
     """
     segment_desc_dict = defaultdict(list)
+    removed_segs_dict = defaultdict(list)
     segments_desc_list = open_rttm(rttm_path)
     for segment_desc in segments_desc_list:
         meeting_id = segment_desc[1]
@@ -50,8 +52,8 @@ def build_segment_desc_dict(rttm_path, filt=True):
                                               start_time, end_time, duration))
     if filt:
         for meeting_id, segment_descs in segment_desc_dict.items():  # filter encompassed segments
-            segment_desc_dict[meeting_id] = filter_encompassed_segments(segment_descs)
-    return segment_desc_dict
+            segment_desc_dict[meeting_id], removed_segs_dict[meeting_id] = filter_encompassed_segments(segment_descs)
+    return segment_desc_dict, removed_segs_dict
 
 
 def open_scp(scp_path):
