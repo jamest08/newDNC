@@ -41,8 +41,6 @@ dvec_aug=
 meeting_length=
 train_rttm=
 valid_rttm=
-train_scp=
-valid_scp=
 
 train_config=conf/tuning/train_transformer.yaml
 decode_config=conf/decode.yaml
@@ -139,9 +137,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --dvec-aug ${dvec_aug} \
         --meeting-length ${meeting_length} \
         --train-rttm ${train_rttm} \
-        --valid-rttm ${valid_rttm} \
-        --train-scp ${train_scp} \
-        --valid-scp ${valid_scp}
+        --valid-rttm ${valid_rttm}
 fi
 
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then

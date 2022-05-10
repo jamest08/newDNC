@@ -256,8 +256,8 @@ def Diaconis(batch):
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting.  indexed to only rotate d-vector part of vector (not tdoa/gccphat)
         batch[meeting_id][:, :dimension] = np.dot(batch[meeting_id][:, :dimension], rotation_mat)
-        # normalise variance
-        batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
+        # normalise variance: not doing for wav2vec2
+        # batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
     return batch
 
 
@@ -327,8 +327,8 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
         else:
             for meeting_id in aug_meetings:
                 aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
-                if dvec == True:
-                    aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
+                # if dvec == True:  # ignoring for wav2vec2
+                #     aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
 
         # convert aug_meetings/aug_speakers to required format for iterator class
         aug_meetings_list = []

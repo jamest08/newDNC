@@ -321,6 +321,10 @@ def get_parser():
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/train.scp", help='')
     parser.add_argument('--valid-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+    parser.add_argument('--train-np', type=str,
+            default="/home/mifs/epcl2/project/embeddings/james/train", help='')
+    parser.add_argument('--valid-np', type=str,
+            default="/home/mifs/epcl2/project/embeddings/james/dev", help='')
     parser.add_argument('--train-rttm', type=str,
             default=None, help='')
     parser.add_argument('--valid-rttm', type=str,
