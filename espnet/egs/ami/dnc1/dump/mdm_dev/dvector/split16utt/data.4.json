@@ -3,11 +3,11 @@
         "AMI-0EN2002c-012": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:488689",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:701937",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -25,11 +25,11 @@
         "AMI-0EN2002c-013": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:501649",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:720553",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -47,11 +47,11 @@
         "AMI-0EN2002c-014": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:514609",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:739169",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -69,11 +69,11 @@
         "AMI-0EN2002c-015": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:527569",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:757785",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -91,11 +91,11 @@
         "AMI-0EN2002c-016": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:540529",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:776401",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -113,11 +113,11 @@
         "AMI-0EN2002c-017": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:553489",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:795017",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -135,11 +135,11 @@
         "AMI-0EN2002c-018": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:566449",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:813633",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -157,11 +157,11 @@
         "AMI-0EN2002c-019": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:579409",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:832249",
                     "name": "input1",
                     "shape": [
                         25,
-                        32
+                        46
                     ]
                 }
             ],
@@ -179,11 +179,11 @@
         "AMI-0EN2002d-000": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:582641",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:836881",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -201,11 +201,11 @@
         "AMI-0EN2002d-001": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:595601",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:855497",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -223,11 +223,11 @@
         "AMI-0EN2002d-002": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:608561",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:874113",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -245,11 +245,11 @@
         "AMI-0EN2002d-003": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:621521",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:892729",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],
@@ -267,11 +267,11 @@
         "AMI-0EN2002d-004": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:634481",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:911345",
                     "name": "input1",
                     "shape": [
                         101,
-                        32
+                        46
                     ]
                 }
             ],

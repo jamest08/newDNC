@@ -1,0 +1,30 @@
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+ls: cannot access 'exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync': No such file or directory
+touch: cannot touch 'exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync/.kick': No such file or directory
+touch: cannot touch 'exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync/.kick': No such file or directory
+touch: cannot touch 'exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync/.kick': No such file or directory
+stage 4: Network Training
+queue.pl: Error, unfinished job no longer exists, log is in exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/train.log, last line is '2022-05-11 11:37:23,059 (asr_train:361) WARNING: Skip DEBUG/INFO messages', syncfile is exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync/done.31888, return status of qstat was 256
+Possible reasons: a) Exceeded time limit? -> Use more jobs! b) Shutdown/Frozen machine? -> Run again!  Qmaster output was: Following jobs do not exist: 
+6188811
+
+queue.pl: Error, unfinished job no longer exists, log is in exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/train.log, last line is '[4', syncfile is exp/mdm_train_pytorch_wav2vec2segmentnonenodiac/q/sync/done.4790, return status of qstat was 256
+Possible reasons: a) Exceeded time limit? -> Use more jobs! b) Shutdown/Frozen machine? -> Run again!  Qmaster output was: Following jobs do not exist: 
+6188812
+
+./run.sh: invalid option --emb
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_wav2vec2segmentnonewdiac/train.log
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_wav2vec2tdoasegment/train.log
+stage 4: Network Training
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_wav2vec2segmentnonewdiac/train.log
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_wav2vec2tdoasegment/train.log
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_newbranchtestdtg/train.log
+stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training

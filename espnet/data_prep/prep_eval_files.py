@@ -60,8 +60,8 @@ def produce_eval_scp(meetings, speakers, segment_desc_dict, dataset='eval'):
         current_speaker_num = 174
     for meeting_id, meeting in meetings.items():
         for segment_index in range(len(meeting)):
-            start_time = int(segment_desc_dict[meeting_id][segment_index][3] * 100)
-            end_time = int(segment_desc_dict[meeting_id][segment_index][4] * 100)
+            start_time = round(segment_desc_dict[meeting_id][segment_index][3] * 100)
+            end_time = round(segment_desc_dict[meeting_id][segment_index][4] * 100)
             speaker = speakers[meeting_id][segment_index]
             try:
                 speaker_number = speaker_mapping[speaker]
@@ -85,16 +85,14 @@ def get_parser():  # official paths should be maintained in asr_train.py
         description="Prepare eval files",
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument('--eval-scp', type=str,
+    parser.add_argument('--eval-emb', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
-    parser.add_argument('--eval-np', type=str,
-            default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
+    # parser.add_argument('--eval-np', type=str,
+    #         default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
     parser.add_argument('--eval-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
-    parser.add_argument('--valid-scp', type=str,
+    parser.add_argument('--valid-emb', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
-    parser.add_argument('--valid-np', type=str,
-            default="/home/mifs/epcl2/project/embeddings/james/dev", help='')
     # note there are two dev window level rttms.  Here using the silence stripped version
     parser.add_argument('--valid-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
@@ -109,13 +107,14 @@ def main():
     dataset = 'eval'  # NB: IF DO DEV, REMEMBER NOT DOING VAR NORMALISATION IN DATA_LOADING
     scp_path, rttm_path = get_file_paths(args, dataset)
 
-    meetings, speakers = build_segment_dicts(args, dataset, dvec=True, tdoa=False, gccphat=False, tdoa_norm=False)
+    meetings, speakers = build_segment_dicts(args, dataset, emb="dvec", tdoa=True, gccphat=True, tdoa_norm=False)
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 
-    meeting_length = 50
+    meeting_length = 101
 
-    segment_desc_dict = build_segment_desc_dict(rttm_path)
+    segment_desc_dict, _ = build_segment_desc_dict(rttm_path)
+
     produce_eval_scp(meetings, speakers, segment_desc_dict, dataset)
 
     split_meetings, split_speakers = prepare_split_eval(meetings, speakers, meeting_length)

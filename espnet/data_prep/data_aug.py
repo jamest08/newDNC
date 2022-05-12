@@ -19,7 +19,7 @@ except:  # use this for debugging
 np.set_printoptions(threshold=np.inf)
 
 
-def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, dvec=True, 
+def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, emb="dvec", 
     tdoa=False, gccphat=False, raw_tdoas=None, raw_gccphats=None, permute_aug=False, meeting_length=100, batch_size=50):
     """Sub-sequence randomisation.
        Randomly chooses a real meeting and samples a sub_meeting at segment boundaries.
@@ -64,7 +64,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
         # if tdoa, also augment those values by doing a random average across each segment:
         if raw_tdoas != None and tdoa == True:
             # find first index of tdoa vector
-            tdoa_pos = 32*dvec
+            tdoa_pos = 32*(emb == "dvec" or emb == "wav2vec2")
             meeting_tdoas = raw_tdoas[random_meeting_id]
             submeeting_tdoas = meeting_tdoas[random_start_idx:end_idx+1]
             for segment_idx, segment_tdoas in enumerate(submeeting_tdoas):
@@ -74,7 +74,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
         # if gccphat, also augment those values by doing a random average across each segment:
         if raw_gccphats != None and gccphat == True:
             # find first index of gccphat vector
-            gccphat_pos = 32*dvec + 7*tdoa
+            gccphat_pos = 32*(emb == "dvec" or emb == "wav2vec2") + 7*tdoa
             meeting_gccphats = raw_gccphats[random_meeting_id]
             submeeting_gccphats = meeting_gccphats[random_start_idx:end_idx+1]
             for segment_idx, segment_gccphats in enumerate(submeeting_gccphats):
@@ -82,7 +82,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, d
                 augmented_meeting[segment_idx][gccphat_pos:gccphat_pos+7] = aug_segment_gccphats
 
         if permute_aug == True:
-            augmented_meeting = permute_tdoa_gccphat(np.array(augmented_meeting, dtype=np.float32), dvec)
+            augmented_meeting = permute_tdoa_gccphat(np.array(augmented_meeting, dtype=np.float32), emb)
 
         augmented_speakers = segmented_speakers_dict[random_meeting_id][random_start_idx:end_idx+1]
 
@@ -113,14 +113,14 @@ def random_average(vector_list, min_vectors_frac=0.7):
     return mean_vector
 
 
-def permute_tdoa_gccphat(meeting, dvec=True):
+def permute_tdoa_gccphat(meeting, emb="dvec"):
     """Performs a consistent permutation of TDOA and GCC-PHAT values across a meeting.
     
     :param: 2D np.array() meeting: List of input vectors (one per seg) from a meeting.
     :return: 2D np.array() permuted_meeting: TDOA and GCC-PHAT are permuted in the same way
     """
     # index of first TDOA or GCC-PHAT value
-    tdoa_pos = 32*dvec
+    tdoa_pos = 32*(emb == "dvec" or emb == "wav2vec2")
 
     rng = np.random.default_rng()
     meeting[:, tdoa_pos:] = rng.permutation(meeting[:, tdoa_pos:], axis=1)
@@ -256,13 +256,11 @@ def Diaconis(batch):
         batch[meeting_id] = np.array(batch[meeting_id])
         # rotate meeting.  indexed to only rotate d-vector part of vector (not tdoa/gccphat)
         batch[meeting_id][:, :dimension] = np.dot(batch[meeting_id][:, :dimension], rotation_mat)
-        # normalise variance: not doing for wav2vec2
-        # batch[meeting_id][:, :dimension] *= np.sqrt(dimension)
     return batch
 
 
 def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="global", meeting_length=50,
-            Diac=True, dvec=True, tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False, tdoa_norm=False):  # generator version as used in on-the-fly
+            Diac=True, emb="dvec", tdoa=False, gccphat=False, tdoa_aug=False, permute_aug=False, tdoa_norm=False):  # generator version as used in on-the-fly
     """Generator to produce mini-batches of augmented data for training.
        The dicts contain original meetings.  Only dicts corresponding to aug_types are required.
 
@@ -271,7 +269,7 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
        :param: str aug_type: "global", "meeting" or "None" (randomisation type)
        :param: int meeting_length: number of segments in each augmented meeting
        :param: Bool Diac: performs Diaconis augmentation on top of batch if True
-       :param: Bool dvec: include d-vectors in input vector
+       :param: Bool emb: include embeddings in input vector: "dvec", "emb" or "None"
        :param: Bool tdoa: include tdoa in input vector
        :param: Bool gcc-phat: include gcc-phat in input vector
        :param: Bool tdoa_aug: perform averaging augmentation on tdoa/gcc-phat
@@ -282,15 +280,15 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
     batch_size = int(batch_size)
     dimension = 32  # of d-vector
     # load data
-    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, dvec=dvec, tdoa=tdoa, gccphat=gccphat, tdoa_norm=tdoa_norm)
+    meetings_dict, speakers_dict = build_segment_dicts(args, dataset, emb=emb, tdoa=tdoa, gccphat=gccphat, tdoa_norm=tdoa_norm)
 
     if tdoa_aug == True:
         if tdoa == True:
-            raw_tdoas, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=True, gccphat=False, average=False, tdoa_norm=tdoa_norm)
+            raw_tdoas, _ = build_segment_dicts(args, dataset, emb="None", tdoa=True, gccphat=False, average=False, tdoa_norm=tdoa_norm)
         else:
             raw_tdoas = None
         if gccphat == True:
-            raw_gccphats, _ = build_segment_dicts(args, dataset, dvec=False, tdoa=False, gccphat=True, average=False, tdoa_norm=tdoa_norm)
+            raw_gccphats, _ = build_segment_dicts(args, dataset, emb="None", tdoa=False, gccphat=True, average=False, tdoa_norm=tdoa_norm)
         else:
             raw_gccphats = None
     else:
@@ -307,7 +305,7 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
     while True:
         if aug_type == "None":
             aug_meetings, aug_speakers = sub_meeting_augmentation(meetings_dict,
-                    speakers_dict, dvec=dvec, raw_tdoas=raw_tdoas, raw_gccphats=raw_gccphats, tdoa=tdoa,
+                    speakers_dict, emb=emb, raw_tdoas=raw_tdoas, raw_gccphats=raw_gccphats, tdoa=tdoa,
                     gccphat=gccphat, permute_aug=permute_aug, meeting_length=meeting_length, batch_size=batch_size)
             
         elif aug_type == "global":
@@ -322,13 +320,12 @@ def produce_augmented_batch(args, dataset='train', batch_size=50, aug_type="glob
             raise ValueError("Invalid aug_type")
 
         # do Diac aug on entire batch
-        if Diac == True and dvec == True:
+        if Diac == True and (emb == "dvec" or emb == "wav2vec2"):
             aug_meetings = Diaconis(aug_meetings)
-        else:
-            for meeting_id in aug_meetings:
-                aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
-                # if dvec == True:  # ignoring for wav2vec2
-                #     aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)  # otherwise norm in diac
+        for meeting_id in aug_meetings:
+            aug_meetings[meeting_id] = np.array(aug_meetings[meeting_id])
+            if emb == "dvec":  # ignoring for wav2vec2
+                aug_meetings[meeting_id][:, :dimension] *= np.sqrt(dimension)
 
         # convert aug_meetings/aug_speakers to required format for iterator class
         aug_meetings_list = []

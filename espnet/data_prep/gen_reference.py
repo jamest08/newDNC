@@ -9,13 +9,13 @@ def produce_eval_reference(evaldnc_path, refoutputeval_path):
     """Takes in refoutputeval.rttm and produces reference.rttm ensuring there are splits at meeting
     boundaries in eval.json/evaldnc.rttm"""
 
-    eval_dict = build_segment_desc_dict(evaldnc_path, filt=False)
+    eval_dict, _ = build_segment_desc_dict(evaldnc_path, filt=False)
     start_times_dict = defaultdict(list)  # key is meeting_id, value is list of start times for sub_meetings
     for sub_meeting_id, sub_meeting in eval_dict.items():
         partial_meeting_id = sub_meeting_id[4:12]  # eg. 0EN2002a
         start_times_dict[partial_meeting_id].append(sub_meeting[0][3])
 
-    ref_dict = build_segment_desc_dict(refoutputeval_path, filt=False)
+    ref_dict, _ = build_segment_desc_dict(refoutputeval_path, filt=False)
     new_ref = defaultdict(list)
     
     for meeting_id in ref_dict:

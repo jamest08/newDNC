@@ -303,7 +303,7 @@ def train(args):
 
     # TODO: find these properly from some data
     # idim = 32
-    idim = 32*args.dvec + 7*args.tdoa + 7*args.gccphat
+    idim = 32*(args.emb == "dvec" or args.emb == "wav2vec2") + 7*args.tdoa + 7*args.gccphat
     odim = 5
 
     logging.info('#input dims : ' + str(idim))
@@ -418,7 +418,7 @@ def train(args):
                         aug_type=args.dvec_aug,
                         meeting_length=args.meeting_length,
                         Diac=args.diac,
-                        dvec=args.dvec,
+                        emb=args.emb,
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,
                         tdoa_aug=args.tdoa_aug,
@@ -435,7 +435,7 @@ def train(args):
                         aug_type="None",
                         meeting_length=args.meeting_length,
                         Diac=False,
-                        dvec=args.dvec,
+                        emb=args.emb,
                         tdoa=args.tdoa,
                         gccphat=args.gccphat,
                         tdoa_aug=False,

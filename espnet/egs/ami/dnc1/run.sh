@@ -30,7 +30,7 @@ train_json=
 dev_json=
 decode_json=
 
-dvec=
+emb=
 tdoa=
 gccphat=
 tdoa_aug=
@@ -41,6 +41,8 @@ dvec_aug=
 meeting_length=
 train_rttm=
 valid_rttm=
+train_emb=
+valid_emb=
 
 train_config=conf/tuning/train_transformer.yaml
 decode_config=conf/decode.yaml
@@ -127,7 +129,7 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --train-sample-rate ${train_sample} \
         --rotate ${rotate} \
         --seed ${seed} \
-        --dvec ${dvec} \
+        --emb ${emb} \
         --tdoa ${tdoa} \
         --gccphat ${gccphat} \
         --tdoa-aug ${tdoa_aug} \
@@ -137,7 +139,9 @@ if [ ${stage} -le 4 ] && [ ${stop_stage} -ge 4 ]; then
         --dvec-aug ${dvec_aug} \
         --meeting-length ${meeting_length} \
         --train-rttm ${train_rttm} \
-        --valid-rttm ${valid_rttm}
+        --valid-rttm ${valid_rttm} \
+        --train-emb ${train_emb} \
+        --valid-emb ${valid_emb}
 fi
 
 if [ ${stage} -le 5 ] && [ ${stop_stage} -ge 5 ]; then
