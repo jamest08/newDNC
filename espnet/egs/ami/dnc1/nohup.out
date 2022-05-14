@@ -28,3 +28,12 @@ queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_newbranchtes
 stage 4: Network Training
 stage 4: Network Training
 stage 4: Network Training
+stage 4: Network Training
+stage 4: Network Training
+queue.pl: job failed with status 1, log is in exp/mdm_train_pytorch_wav2vec2segmentnonewdiac/train.log
+stage 4: Network Training
+stage 5: Decoding
+decode_mdm_dev_decode
+2022-05-13 17:06:40,743 (splitjson:40) INFO: /home/mifs/jhrt2/newDNC/venv/bin/python /home/mifs/jhrt2/newDNC/espnet/egs/ami/dnc1/../../../utils/splitjson.py --parts 16 dump/mdm_dev/dvector/data.json
+2022-05-13 17:06:40,744 (splitjson:52) INFO: number of utterances = 192
+Finished

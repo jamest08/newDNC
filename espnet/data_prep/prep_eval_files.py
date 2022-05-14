@@ -85,12 +85,15 @@ def get_parser():  # official paths should be maintained in asr_train.py
         description="Prepare eval files",
         config_file_parser_class=configargparse.YAMLConfigFileParser,
         formatter_class=configargparse.ArgumentDefaultsHelpFormatter)
+    # parser.add_argument('--eval-emb', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
+    # parser.add_argument('--eval-rttm', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     parser.add_argument('--eval-emb', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
-    # parser.add_argument('--eval-np', type=str,
-    #         default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
+            default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
     parser.add_argument('--eval-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
+
     parser.add_argument('--valid-emb', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
     # note there are two dev window level rttms.  Here using the silence stripped version
@@ -107,11 +110,11 @@ def main():
     dataset = 'eval'  # NB: IF DO DEV, REMEMBER NOT DOING VAR NORMALISATION IN DATA_LOADING
     scp_path, rttm_path = get_file_paths(args, dataset)
 
-    meetings, speakers = build_segment_dicts(args, dataset, emb="dvec", tdoa=True, gccphat=True, tdoa_norm=False)
+    meetings, speakers = build_segment_dicts(args, dataset, emb="wav2vec2", tdoa=False, gccphat=False, tdoa_norm=False)
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 
-    meeting_length = 101
+    meeting_length = 50
 
     segment_desc_dict, _ = build_segment_desc_dict(rttm_path)
 

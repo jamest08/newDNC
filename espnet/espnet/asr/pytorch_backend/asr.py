@@ -301,8 +301,6 @@ def train(args):
     # idim = int(valid_json[utts[0]]['input'][0]['shape'][-1])
     # odim = int(valid_json[utts[0]]['output'][0]['shape'][-1])
 
-    # TODO: find these properly from some data
-    # idim = 32
     idim = 32*(args.emb == "dvec" or args.emb == "wav2vec2") + 7*args.tdoa + 7*args.gccphat
     odim = 5
 

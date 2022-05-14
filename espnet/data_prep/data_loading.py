@@ -179,31 +179,32 @@ def build_segment_dicts(args, dataset, filt=True, emb="dvec", tdoa=False, gccpha
             meeting_vectors = np.load(meeting_path, allow_pickle=True)
             # filter encompassed segments
             meeting_vectors = np.delete(meeting_vectors, removed_segs_dict[meeting_id], axis=0)
-            # L2 normalise
-            meeting_vectors = meeting_vectors/np.linalg.norm(meeting_vectors)
             meeting = meeting_vectors
 
             speakers = []
             meeting_tdoas = []
             meeting_gccphats = []
-            for segment_desc in segment_desc_dict[meeting_id]:
+            for segment_index, segment_desc in enumerate(segment_desc_dict[meeting_id]):
                 start_index = segment_desc[0]
                 end_index = segment_desc[1]
-
                 speaker = segment_desc[2]
                 speakers.append(speaker)
 
+                # L2 normalise
+                meeting_vectors[segment_index] = meeting_vectors[segment_index]/np.linalg.norm(meeting_vectors[segment_index])
+
                 # concatenate arrays, ignore final repeated/padding TDOA and GCC-PHAT values
                 if tdoa == True:
-                    meeting_tdoas.append(np.mean(tdoas[meeting_id][start_index:end_index], axis=0))
+                    tdoa_segment = tdoas[meeting_id][start_index:end_index]
+                    meeting_tdoas.append(np.mean(tdoa_segment, axis=0))
                 if gccphat == True:
                     meeting_gccphats.append(np.mean(gccphats[meeting_id][start_index:end_index], axis=0))
             
-            meeting_tdoas = np.array(meeting_tdoas)
-            meeting_gccphats = np.array(meeting_gccphats)
             if tdoa == True:
+                meeting_tdoas = np.array(meeting_tdoas)
                 meeting = np.concatenate((meeting, meeting_tdoas), axis=1, dtype=np.float32)
             if gccphat == True:
+                meeting_gccphats = np.array(meeting_gccphats)
                 meeting = np.concatenate((meeting, meeting_gccphats), axis=1, dtype=np.float32)
 
             segmented_meetings_dict[meeting_id] = meeting.astype(np.float32)
@@ -378,14 +379,19 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
             default="/home/mifs/jhrt2/newDNC/data/arks.concat/train.scp", help='')
     parser.add_argument('--valid-scp', type=str,
             default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
-    parser.add_argument('--eval-scp', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.concat/eval.scp", help='')
-    parser.add_argument('--eval-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
+
     parser.add_argument('--train-np', type=str,
             default="/home/mifs/epcl2/project/embeddings/james/train", help='')
+
+    # parser.add_argument('--eval-emb', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
+    # parser.add_argument('--eval-rttm', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     parser.add_argument('--eval-emb', type=str,
             default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
+    parser.add_argument('--eval-rttm', type=str,
+            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
+
     parser.add_argument('--train-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
     parser.add_argument('--valid-rttm', type=str,
@@ -399,13 +405,7 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = 'eval'
 
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="wav2vec2", tdoa=False, gccphat=False, average=True)
-    segment_desc_dict, _ = build_segment_desc_dict(args.eval_rttm, filt=True)
-    print(len(meetings["AMIMDM-0IS1009b"]))
-    print(len(speakers["AMIMDM-0IS1009b"]))
-    for i, segment in enumerate(segment_desc_dict["AMIMDM-0IS1009b"]):
-        print(i, segment[3], segment[4])
-    
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="wav2vec2", tdoa=True, gccphat=False, average=True)
 
 if __name__ == '__main__':
     main()

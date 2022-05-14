@@ -1,13 +1,13 @@
 {
     "utts": {
-        "AMI-0IS1009d-001": {
+        "AMI-0IS1009c-008": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2563481",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1105553",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        8,
+                        32
                     ]
                 }
             ],
@@ -15,21 +15,65 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        8,
                         5
                     ],
-                    "tokenid": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 3 3 3 2 2 2 2"
+                    "tokenid": "0 0 1 0 2 0 0 3"
+                }
+            ]
+        },
+        "AMI-0IS1009d-000": {
+            "input": [
+                {
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:182865",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 2 0 0 1 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 1 1 3 3 3 3 3 3 2 2"
+                }
+            ]
+        },
+        "AMI-0IS1009d-001": {
+            "input": [
+                {
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:189297",
+                    "name": "input1",
+                    "shape": [
+                        50,
+                        32
+                    ]
+                }
+            ],
+            "output": [
+                {
+                    "name": "target1",
+                    "shape": [
+                        50,
+                        5
+                    ],
+                    "tokenid": "0 1 0 0 1 0 2 0 0 0 3 3 3 3 1 3 1 3 3 3 1 3 1 3 1 3 2 3 2 2 3 1 3 1 1 3 3 3 3 3 3 3 3 1 3 3 3 1 3 2"
                 }
             ]
         },
         "AMI-0IS1009d-002": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2582097",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:195729",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -37,21 +81,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 0 1 0 0 2 0 0 0 0 0 0 0 0 0 0 0 2 0 0 2 0 0 0 0 0 2 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 1 0 0 0 0 2 0 0 0 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 2 3 3 3 3 3 2 3 3 3 3 3 2 3 3 3 3 2 3 3 3 3 2 3 3"
+                    "tokenid": "0 0 1 0 2 2 0 2 3 2 2 2 2 2 3 2 2 0 2 0 2 2 3 2 2 0 2 2 0 2 2 3 3 0 3 2 3 3 1 3 0 0 2 1 2 2 1 2 3 3"
                 }
             ]
         },
         "AMI-0IS1009d-003": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2600713",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:202161",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -59,21 +103,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 1 0 1 1 0 2 0 0 0 0 0 0 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 2 0 0 2 0 0 0 2 0 0 0 0 0 0 0 1 0 0 2 0 0 3 0 0 0 0 0 2 2 2 2 2 2 2 2 2 1 1 2 2 2 2 2 2 1 2 2 2 2 2 2 2 2 2 2 1 1 1 1 1 1 2 2 2 2"
+                    "tokenid": "0 1 0 0 0 1 0 1 0 0 0 0 0 1 0 1 1 0 1 1 0 1 0 1 0 0 1 1 1 1 2 0 1 1 2 3 1 1 1 1 1 1 0 0 1 1 1 1 1 1"
                 }
             ]
         },
         "AMI-0IS1009d-004": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2619329",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:208593",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -81,21 +125,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 1 1 1 0 1 0 0 2 2 0 0 1 0 0 1 1 1 1 0 1 1 1 1 0 1 0 0 0 0 2 2 2 2 2 1 1 1 1 2 1 2 2 0 0 0 2 2 2 2 2 3 3 3 2 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 3 0 0 0 2 2 2 2 2 2 0 0 0 2 2 2 2 2 0 0 0 0 0 2 2 0 0 0 0 0"
+                    "tokenid": "0 0 0 0 0 1 0 2 1 3 3 2 0 0 2 0 0 3 0 2 0 1 0 1 2 0 3 2 0 0 2 0 1 2 0 3 0 3 0 1 0 0 1 0 3 1 0 3 0 0"
                 }
             ]
         },
         "AMI-0IS1009d-005": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2637945",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:215025",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -103,21 +147,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 0 1 1 0 1 0 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 0 1 1 1 2 3 1 1 1 1 1 1 1 1 1 0 0 1 1 1 1 1 1 1 1 1 1 2 2 1 1 1 1 1 1 2 1 1 1 1 0 2 3 0 1 1 0 1 1 1 1 0 0 1 1 2 2 1 1 1 3"
+                    "tokenid": "0 1 2 0 0 3 0 0 2 0 0 0 0 0 0 0 0 0 3 0 3 3 3 0 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 1 2 3 3 3 3 3"
                 }
             ]
         },
         "AMI-0IS1009d-006": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2656561",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:221457",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -125,21 +169,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 0 0 1 0 0 0 1 1 1 0 1 0 0 2 0 2 2 0 0 0 0 0 3 3 2 3 3 0 0 2 2 0 0 0 0 3 0 0 0 1 0 0 2 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1"
+                    "tokenid": "0 0 0 0 0 0 0 0 1 2 0 2 3 1 2 0 2 1 0 2 0 2 2 0 2 2 0 1 0 3 0 0 2 2 2 2 0 0 2 0 2 0 0 0 0 0 2 0 2 2"
                 }
             ]
         },
         "AMI-0IS1009d-007": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2675177",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:227889",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -147,21 +191,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 3 3 3 0 2 3 3 3 3 3 0 0 0"
+                    "tokenid": "0 0 0 0 1 0 0 0 0 0 0 0 0 1 2 0 0 0 1 0 1 1 0 3 0 2 0 0 0 1 0 1 0 1 3 0 2 0 0 0 1 0 0 2 0 0 1 1 0 3"
                 }
             ]
         },
         "AMI-0IS1009d-008": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2693793",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:234321",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -169,21 +213,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 1 2 2 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 2 2 2 2 2 2 2 2 2 2 2 2 1 2 2 2 0 0 0 0 0 0 0 0 0 0 0 0 0 2 2 0 2 2 2 2 2 2 2 2 2 2 0 2 2 2 0 0 2 2 2 2 2 0 2 2 2 2 2 2 2 2 2 2 2 2 3 2 2 0 2 1 2 2 2"
+                    "tokenid": "0 1 0 0 0 0 0 0 0 2 2 2 2 1 3 1 1 1 1 0 0 3 0 1 0 0 0 1 0 2 2 2 0 2 2 2 2 0 0 2 0 2 0 1 2 2 2 0 2 2"
                 }
             ]
         },
         "AMI-0IS1009d-009": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2712409",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:240753",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        38,
+                        32
                     ]
                 }
             ],
@@ -191,65 +235,21 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        38,
                         5
                     ],
-                    "tokenid": "0 1 1 1 1 0 2 0 3 3 0 0 0 0 0 0 1 0 0 1 1 3 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 3 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 2 0 3 3 0 0 0 0 0 0 0 0 0 0 0 0 3 0 0 0 0 0 0 0 1 1 1 1 1 1 1 2 3 2 3 3 3 3 3 3 3 3 3 3 0 0 0 0"
-                }
-            ]
-        },
-        "AMI-0IS1009d-010": {
-            "input": [
-                {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2731025",
-                    "name": "input1",
-                    "shape": [
-                        101,
-                        46
-                    ]
-                }
-            ],
-            "output": [
-                {
-                    "name": "target1",
-                    "shape": [
-                        101,
-                        5
-                    ],
-                    "tokenid": "0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 3 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 0 0 0 1 0 2 2 2 2 0 0 1 2 2 2 2 0 0 2 2 2 2 2 2 0 0 0 0 2 2 2 2 2 2 0 2 2"
-                }
-            ]
-        },
-        "AMI-0IS1009d-011": {
-            "input": [
-                {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2749641",
-                    "name": "input1",
-                    "shape": [
-                        57,
-                        46
-                    ]
-                }
-            ],
-            "output": [
-                {
-                    "name": "target1",
-                    "shape": [
-                        57,
-                        5
-                    ],
-                    "tokenid": "0 0 1 1 1 1 2 1 1 0 0 1 1 1 1 1 0 1 1 1 1 1 1 1 2 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 3 0 0 0 1 1 3 3 2 1 0 0 3 0 0 0"
+                    "tokenid": "0 1 0 2 0 0 3 1 0 1 0 0 0 1 0 0 1 1 0 0 0 1 0 1 0 2 3 1 1 1 0 3 3 2 0 1 1 1"
                 }
             ]
         },
         "AMI-0TS3003a-000": {
             "input": [
                 {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2760161",
+                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:1008657",
                     "name": "input1",
                     "shape": [
-                        101,
-                        46
+                        50,
+                        32
                     ]
                 }
             ],
@@ -257,32 +257,10 @@
                 {
                     "name": "target1",
                     "shape": [
-                        101,
+                        50,
                         5
                     ],
-                    "tokenid": "0 1 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
-                }
-            ]
-        },
-        "AMI-0TS3003a-001": {
-            "input": [
-                {
-                    "feat": "/data/mifs_scratch/jhrt2/aug_data_None/eval.ark:2778777",
-                    "name": "input1",
-                    "shape": [
-                        101,
-                        46
-                    ]
-                }
-            ],
-            "output": [
-                {
-                    "name": "target1",
-                    "shape": [
-                        101,
-                        5
-                    ],
-                    "tokenid": "0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+                    "tokenid": "0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 0"
                 }
             ]
         }
