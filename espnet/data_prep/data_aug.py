@@ -37,6 +37,7 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, e
     # Two dictionaries with key as new meeting_id
     aug_meetings = {}  # Value is augmented meeting (1 d-vector per segment)
     aug_speakers = {}  # Value is labels for meeting (1 speaker per segment)
+
     for i in range(batch_size):
         aug_meeting_id = "AMI-AUG_" + str(i)
 
@@ -53,6 +54,11 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, e
         # randomly choose meeting
         random_meeting_id = np.random.choice(valid_meeting_ids)
         random_meeting = segmented_meetings_dict[random_meeting_id]
+
+        if meeting_length >= 200: # this should cover all cases of > 50 segment (in segs or windows)
+            meeting_length *= (np.random.rand() * 0.5 + 0.5) # uniform random sample in [0.5, 1] for CL
+            # this is slightly different from original CL approach but should work still
+        meeting_length = min(round(meeting_length), len(random_meeting))
 
         # randomly choose starting index (ie. starting segment)
         max_start_idx = len(random_meeting) - meeting_length

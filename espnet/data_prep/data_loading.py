@@ -172,7 +172,7 @@ def build_segment_dicts(args, dataset, filt=True, emb="dvec", tdoa=False, gccpha
 
     if emb == "wav2vec2":
         meeting_files_list = os.listdir(emb_path)  # list of names of files in embedding directory
-        meeting_files_list.remove("%s.csv" % dataset)
+        meeting_files_list.remove("%s150.csv" % dataset)
         for meeting_file in meeting_files_list:  # iterate through meetings
             meeting_id = "AMIMDM-" + meeting_file[:-4]  # NB: AMIMDM- prefix added
             meeting_path = emb_path + '/' + meeting_file

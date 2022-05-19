@@ -38,11 +38,14 @@ def produce_eval_reference(evaldnc_path, refoutputeval_path):
                     new_ref[second_submeeting_id].append(second_split_seg)
                     break
             else:
-                for submeeting_num in range(len(start_times)-1):
-                    if segment_desc[3] >= start_times[submeeting_num] and segment_desc[3] < start_times[submeeting_num+1]:
-                        break
+                if len(start_times) > 1:
+                    for submeeting_num in range(len(start_times)-1):
+                        if segment_desc[3] >= start_times[submeeting_num] and segment_desc[3] < start_times[submeeting_num+1]:
+                            break
+                    else:
+                        submeeting_num += 1
                 else:
-                    submeeting_num += 1
+                    submeeting_num = 0
                 submeeting_id = 'AMI-' + partial_meeting_id + '-' + f"{submeeting_num:03d}"
                 new_ref[submeeting_id].append(segment_desc)
 

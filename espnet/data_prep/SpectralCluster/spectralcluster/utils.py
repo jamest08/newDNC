@@ -18,6 +18,10 @@ def compute_affinity_matrix(X):
     """
     # Normalize the data.
     l2_norms = np.linalg.norm(X, axis=1)
+
+    # INSERTED THIS LINE TO PREVENT DIVIDE BY ZERO (doesn't happen often)
+    l2_norms = np.where(l2_norms==0, 1, l2_norms)
+    
     X_normalized = X / l2_norms[:, None]
     # Compute cosine similarities. Range is [-1,1].
     cosine_similarities = np.matmul(X_normalized, np.transpose(X_normalized))
