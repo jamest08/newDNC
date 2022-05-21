@@ -92,7 +92,7 @@ def get_parser():  # official paths should be maintained in asr_train.py
     parser.add_argument('--eval-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     # parser.add_argument('--eval-emb', type=str,
-    #         default="/home/mifs/epcl2/project/embeddings/james/eval150", help='')
+    #         default="/data/mifs_scratch/jhrt2/james/eval150", help='')
     # parser.add_argument('--eval-rttm', type=str,
     #         default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
 
@@ -112,11 +112,11 @@ def main():
     dataset = 'eval'  # NB: IF DO DEV, REMEMBER NOT DOING VAR NORMALISATION IN DATA_LOADING
     scp_path, rttm_path = get_file_paths(args, dataset)
 
-    meetings, speakers = build_segment_dicts(args, dataset, emb="None", tdoa=True, gccphat=False, tdoa_norm=False)
+    meetings, speakers = build_segment_dicts(args, dataset, emb="dvec", tdoa=True, gccphat=True, tdoa_norm=False)
     for meeting_id in meetings:
         meetings[meeting_id] = np.array(meetings[meeting_id])
 
-    meeting_length = 101
+    meeting_length = 3385
 
     segment_desc_dict, _ = build_segment_desc_dict(rttm_path)
 

@@ -135,15 +135,17 @@ def setup():
     #         default="/home/mifs/jhrt2/newDNC/data/arks.concat/eval.scp", help='')
     # cmdparser.add_argument('--eval-rttm', type=str,
     #         default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
+    # cmdparser.add_argument('--eval-emb', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
     cmdparser.add_argument('--eval-emb', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
+            default="/data/mifs_scratch/jhrt2/james/eval150", help='')
     cmdparser.add_argument('--eval-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     cmdparser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     #cmdparser.add_argument('injson', help='ark files containing the meetings', type=str)
     cmdparser.add_argument('--output-path', type=str,
-            default="/data/mifs_scratch/jhrt2/models/FinalResults/spectral/window150tdoa/eval95k24.1.json", help='')
+            default="/data/mifs_scratch/jhrt2/models/FinalResults/spectral/window150wav2vec2gccphat/eval95k24.1.json", help='')
     cmdargs = cmdparser.parse_args()
     return cmdargs
 
@@ -155,9 +157,9 @@ def main():
     # remember to edit arg paths
     dataset = "eval"
     args = setup()
-    emb = "None"
-    tdoa = True
-    gccphat = False
+    emb = "wav2vec2"
+    tdoa = False
+    gccphat = True
     meeting_length = 101
 
     meetings, speakers = build_segment_dicts(args, dataset, emb=emb, tdoa=tdoa, gccphat=gccphat)
