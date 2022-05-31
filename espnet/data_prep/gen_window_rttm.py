@@ -6,15 +6,16 @@ from collections import defaultdict
 
 from data_loading import build_segment_desc_dict
 
-dataset = "eval"
+dataset = "train"
 # use silence stripped rttms for dev, eval (ss_{dataset}.rttm)
-rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/ss_eval.rttm"
+#rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/ss_eval.rttm"
+rttm_path = "/home/mifs/jhrt2/newDNC/data/rttms/test_train.rttm"
 
 if dataset == 'eval' or dataset == 'dev':
     filt = False  # important not to filter segments so timings stay correct to avoid missed speech
 else:
     filt = True
-segment_desc_dict = build_segment_desc_dict(rttm_path, filt=filt)
+segment_desc_dict, _ = build_segment_desc_dict(rttm_path, filt=filt)
 
 """
 For each meeting, create a list of windows where the shift between window centres is ~1s.  A sequence of windows
@@ -37,7 +38,7 @@ happening at each stage and so is easy to edit.
 
 new_segments_desc_dict = defaultdict(list)
 frames_per_dvector = 15  # the number of frames used to generate one d-vector
-desired_window_length = 200
+desired_window_length = 150
 
 # first just establishing window start and end indices
 for meeting_id, meeting in segment_desc_dict.items():
@@ -113,6 +114,7 @@ for meeting_id, meeting in segment_desc_dict.items():
         new_segments_desc_dict[meeting_id] += windows
         segment_index += 1
 
+
 # now find speaker label for each window
 for meeting_id, meeting in segment_desc_dict.items():
     segment_index = 0
@@ -145,7 +147,7 @@ for meeting_id, meeting in segment_desc_dict.items():
             window_index += 1
 
 
-# write to rttm
+#write to rttm
 with open(dataset + str(desired_window_length) + "_window_level.rttm", "w") as rttm_file:
     for meeting_id, meeting in new_segments_desc_dict.items():
         for segment in meeting:

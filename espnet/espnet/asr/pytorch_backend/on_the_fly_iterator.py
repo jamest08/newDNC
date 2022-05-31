@@ -50,7 +50,7 @@ class OnTheFlyIterator(iterator.Iterator):
         self.batch_size = batch_size
         self._repeat = repeat
         self._shuffle = shuffle
-        self.epoch_size = 2940  # ie 2940 mini-batches per epoch. should make this an arg in train_transformer.yaml
+        self.epoch_size = 5000  # ie 2940 mini-batches per epoch. should make this an arg in train_transformer.yaml
 
         if self._shuffle is not None:
             if order_sampler is not None:

@@ -56,14 +56,16 @@ def sub_meeting_augmentation(segmented_meetings_dict, segmented_speakers_dict, e
         random_meeting = segmented_meetings_dict[random_meeting_id]
 
         if meeting_length >= 200: # this should cover all cases of > 50 segment (in segs or windows)
-            meeting_length *= (np.random.rand() * 0.5 + 0.5) # uniform random sample in [0.5, 1] for CL
+            sub_meeting_length = min(meeting_length, len(random_meeting))
+            sub_meeting_length *= (np.random.rand() * 0.5 + 0.5) # uniform random sample in [0.5, 1] for CL
             # this is slightly different from original CL approach but should work still
-        meeting_length = min(round(meeting_length), len(random_meeting))
+            sub_meeting_length = round(sub_meeting_length)
+        
 
         # randomly choose starting index (ie. starting segment)
-        max_start_idx = len(random_meeting) - meeting_length
+        max_start_idx = len(random_meeting) - sub_meeting_length
         random_start_idx = np.random.choice(max_start_idx+1)
-        end_idx = random_start_idx + meeting_length - 1
+        end_idx = random_start_idx + sub_meeting_length - 1
         # produce sub-meeting
         augmented_meeting = random_meeting[random_start_idx:end_idx+1]
 
@@ -209,13 +211,18 @@ def meeting_speaker_randomisation(meeting_dvec_dict, segmented_speakers_dict, me
         aug_meeting_id = "AMI-AUG_" + str(i)
         # choose random sequence of speaker labels
         random_speaker_seq = np.random.choice(speaker_labels_array)
+
+        if meeting_length >= 200: # this should cover all cases of > 50 segment (in segs or windows)
+            sub_meeting_length = meeting_length*(np.random.rand() * 0.5 + 0.5) # uniform random sample in [0.5, 1] for CL
+            sub_meeting_length = round(sub_meeting_length)
+
         # randomly truncate sequence to meeting length (effectively sub meeting randomisation)
-        if meeting_length < len(random_speaker_seq):
-            start_index = np.random.choice(len(random_speaker_seq) - meeting_length + 1)
-            end_index = start_index + meeting_length - 1
+        if sub_meeting_length < len(random_speaker_seq):
+            start_index = np.random.choice(len(random_speaker_seq) - sub_meeting_length + 1)
+            end_index = start_index + sub_meeting_length - 1
             random_speaker_seq = random_speaker_seq[start_index:end_index+1]
-        else:  # TODO: this needs to be improved. just for testing. shortest train meeting is 71
-            print("shorter meeting returned")
+        # else:  # TODO: this needs to be improved. just for testing. shortest train meeting is 71
+        #     print("shorter meeting returned")
 
         # choose meeting to sample from, ensure it has at least the same number of speakers (train set meetings have 3 or 4)
         if len(set(random_speaker_seq)) == 4:

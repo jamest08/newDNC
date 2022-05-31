@@ -96,11 +96,11 @@ def get_parser():  # official paths should be maintained in asr_train.py
     # parser.add_argument('--eval-rttm', type=str,
     #         default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
 
-    parser.add_argument('--valid-emb', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
+    # parser.add_argument('--valid-emb', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/dev.scp", help='')
     # note there are two dev window level rttms.  Here using the silence stripped version
-    parser.add_argument('--valid-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
+    # parser.add_argument('--valid-rttm', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/rttms.concat/dev.rttm", help='')
     parser.add_argument('--tdoa-directory', type=str,
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     return parser

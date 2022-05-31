@@ -79,7 +79,7 @@ def build_global_dvec_dict(args, dataset, split=False, tdoa=False, gccphat=False
     scp_path, rttm_path = get_file_paths(args, dataset)
     global_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
-    segment_desc_dict = build_segment_desc_dict(rttm_path)
+    segment_desc_dict, _ = build_segment_desc_dict(rttm_path)
     for meeting_path_list in meeting_path_lists:  # iterate through meetings
         meeting_id = meeting_path_list[0]
         meeting_path = meeting_path_list[1]
@@ -117,7 +117,7 @@ def build_meeting_dvec_dict(args, dataset, split=False, tdoa=False, gccphat=Fals
     scp_path, rttm_path = get_file_paths(args, dataset)
     meeting_dvec_dict = {}
     meeting_path_lists = open_scp(scp_path)
-    segment_desc_dict = build_segment_desc_dict(rttm_path)
+    segment_desc_dict, _ = build_segment_desc_dict(rttm_path)
     for meeting_path_list in meeting_path_lists:  # iterate through meetings
         inner_dvec_dict = {}  # to be a value in meeting_dvec_dict (defaultdict for numpy array?)
         meeting_id = meeting_path_list[0]
@@ -383,14 +383,14 @@ def get_parser():  # debugging only, official paths should be maintained in asr_
     parser.add_argument('--train-np', type=str,
             default="/home/mifs/epcl2/project/embeddings/james/train", help='')
 
-    # parser.add_argument('--eval-emb', type=str,
-    #         default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
-    # parser.add_argument('--eval-rttm', type=str,
-    #         default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
     parser.add_argument('--eval-emb', type=str,
-            default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
+            default="/home/mifs/jhrt2/newDNC/data/arks.meeting.cmn.tdnn/eval.scp", help='')
     parser.add_argument('--eval-rttm', type=str,
-            default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
+            default="/home/mifs/jhrt2/newDNC/data/window_level_rttms/eval150_window_level.rttm", help='')
+    # parser.add_argument('--eval-emb', type=str,
+    #         default="/home/mifs/epcl2/project/embeddings/james/eval", help='')
+    # parser.add_argument('--eval-rttm', type=str,
+    #         default="/home/mifs/jhrt2/newDNC/data/rttms.concat/eval.rttm", help='')
 
     parser.add_argument('--train-rttm', type=str,
             default="/home/mifs/jhrt2/newDNC/data/rttms.concat/train.rttm", help='')
@@ -405,7 +405,22 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = 'eval'
 
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="wav2vec2", tdoa=True, gccphat=False, average=True)
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="None", tdoa=True, gccphat=False, average=True)
+
+    meeting_id = "AMIMDM-0TS3003a"
+    meeting_id = "AMIMDM-0EN2002b"
+    print(meeting_id)
+    TDOAS = []
+    first_speaker = speakers[meeting_id][0]
+    for segment_index in range(len(meetings[meeting_id])):
+        if speakers[meeting_id][segment_index] == first_speaker:
+            # print(meetings[meeting_id][segment_index])
+            TDOAS.append(meetings[meeting_id][segment_index])
+            
+    TDOAS = np.array(TDOAS)
+    print(np.std(TDOAS, axis=0))
+    
+
 
 if __name__ == '__main__':
     main()

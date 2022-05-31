@@ -125,7 +125,7 @@ def setup():
     cmdparser.add_argument('--gauss-blur', help='gaussian blur for spectral clustering',
                            type=float, default=0.1)
     cmdparser.add_argument('--p-percentile', help='p_percentile for spectral clustering',
-                           type=float, default=0.93)
+                           type=float, default=0.8)
     cmdparser.add_argument('--custom-dist', help='e.g. euclidean, cosine', type=str, default=None)
     # cmdparser.add_argument('--json-out', dest='output_json',
     #                        help='json output file used for scoring', default=None)
@@ -145,7 +145,7 @@ def setup():
             default="/data/mifs_scratch/jhrt2/BeamformIt/MDM_AMI_fixedref_10", help='')
     #cmdparser.add_argument('injson', help='ark files containing the meetings', type=str)
     cmdparser.add_argument('--output-path', type=str,
-            default="/data/mifs_scratch/jhrt2/models/FinalResults/spectral/window150wav2vec2gccphat/eval95k24.1.json", help='')
+            default="/data/mifs_scratch/jhrt2/models/FinalResults/spectral/window150wav2vec2/eval95k24.1.json", help='')
     cmdargs = cmdparser.parse_args()
     return cmdargs
 
@@ -159,7 +159,7 @@ def main():
     args = setup()
     emb = "wav2vec2"
     tdoa = False
-    gccphat = True
+    gccphat = False
     meeting_length = 101
 
     meetings, speakers = build_segment_dicts(args, dataset, emb=emb, tdoa=tdoa, gccphat=gccphat)

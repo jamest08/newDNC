@@ -29,12 +29,12 @@ def do_plot(args, dataset, json_path, sub_meeting_id, meeting_length, output_fil
 
 
     # now find corresponding embeddings
-    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="dvec", tdoa=False, gccphat=False, average=True, tdoa_norm=False)
+    meetings, speakers = build_segment_dicts(args, dataset, filt=True, emb="None", tdoa=True, gccphat=False, average=True, tdoa_norm=False)
     input_vectors = np.array(meetings["AMIMDM-" + sub_meeting_id[4:-4]][:meeting_length])
 
     X_embedded = TSNE(n_components=2, learning_rate='auto', init='random').fit_transform(input_vectors)
 
-    colormap = np.array(['g', 'r', 'b', 'y'])
+    colormap = np.array(['r', 'g', 'y', 'b'])
     plt.scatter(X_embedded[:, 0], X_embedded[:, 1], c=colormap[labels])
     plt.gca().axes.get_xaxis().set_visible(False)
     plt.gca().axes.get_yaxis().set_visible(False)
@@ -70,13 +70,15 @@ def main():
     args, _ = parser.parse_known_args()
     dataset = "eval"
 
-    json_path = "/data/mifs_scratch/jhrt2/models/FinalResults/segment_level/mdm_train_pytorch_nonewdiac/decode_mdm_dev_decode/data.12.json"
-    #json_path = "/data/mifs_scratch/jhrt2/models/FinalResults/spectral/segment50/eval95k24.1.json"
+    #  json_path = "/data/mifs_scratch/jhrt2/models/FinalResults/tdoa/mdm_train_pytorch_tdoanone/decode_mdm_dev_decode/data.9.json"
+    json_path = "/data/mifs_scratch/jhrt2/models/FinalResults/spectral/window150tdoa/eval95k24.1.json"
     # only do -000 submeetings so can access input vectors easily
-    sub_meeting_id = "AMI-0IS1009d-000"
-    meeting_length = 50
-    label_type = "true"
-    output_file = "nonewdiac" + label_type + "labels.png"
+    #sub_meeting_id = "AMI-0IS1009d-000"
+    #sub_meeting_id = "AMI-0EN2002c-000"
+    sub_meeting_id = "AMI-0IS1009a-000"
+    meeting_length = 101
+    label_type = "SC"
+    output_file = "tdoa" + label_type + "labels2.png"
 
     do_plot(args, dataset, json_path, sub_meeting_id, meeting_length, output_file, label_type)
 

@@ -429,7 +429,7 @@ def train(args):
     valid_generator = produce_augmented_batch(
                         args,
                         dataset="dev",
-                        batch_size=args.batch_size,
+                        batch_size=10,
                         aug_type="None",
                         meeting_length=args.meeting_length,
                         Diac=False,
@@ -439,7 +439,7 @@ def train(args):
                         tdoa_aug=False,
                         permute_aug=False,
                         tdoa_norm=args.tdoa_norm)
-    valid_iter = OnTheFlyIterator(valid_generator, args.batch_size, repeat=False, shuffle=False)
+    valid_iter = OnTheFlyIterator(valid_generator, 10, repeat=False, shuffle=False)
     valid_iter = {'main': valid_iter}
 
     # Set up a trainer
