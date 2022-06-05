@@ -8,7 +8,7 @@ The number of mini-batches per epoch can be changed in espnet/espnet/asr/pytorch
 
 First do `source venv/bin/activate`
 
-To produce window-level rttms, run `python3 espnet/data_prep/gen_window_rttm.py`,  setting dataset, input segment-level rttm path, frames_per_dvector and desired_window_length (in frames) in the file.
+To produce window-level rttms, run `python3 espnet/data_prep/gen_window_rttm.py`,  setting dataset, input segment-level rttm path, frames_per_dvector and desired_window_length (in frames) in the file.  Window-level rttms have been already produced for window lengths of 0.5s, 1s, 1.5s and 2s (see path below). 
 
 Then `cd espnet/egs/ami/dnc1`
 
