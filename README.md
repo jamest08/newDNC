@@ -15,9 +15,9 @@ Then `cd espnet/egs/ami/dnc1`
 Train the model using:
 `./run.sh --stage 4 --stop_stage 4 --init-model model.for.initialisation --emb {dvec, wav2vec2} --tdoa {true, false} --gccphat {true, false} --tdoa-aug {true, false} --permute-aug {true, false} --tdoa-norm {true, false} --dvec-aug {None, meeting, global} --diac {true, false} --meeting-length 50 --train_emb path/to/train.scp --train_rttm path/to/train.rttm --dev_emb path/to/dev.scp --dev_rttm path/to/dev.rttm --tag tag.for.model`
 
-NB: if TDOA/GCC-PHAT are included, data_aug should be None
+NB: if TDOA/GCC-PHAT are included, data_aug should be None.  If wav2vec2 is used, train-emb and valid-emb should be the relevant wav2vec2 directory.
 
-Produce evaluation files using `python3 espnet/data_prep/prep_eval_files.py`, setting eval-emb, eval-rttm, meeting_length, emb, tdoa, gccphat and output paths in produce_eval_scp(), write_to_json() and write_to_ark().
+Produce evaluation files eval.json and scoring_eval.scp using `python3 espnet/data_prep/prep_eval_files.py`, setting eval-emb, eval-rttm, meeting_length, emb, tdoa, gccphat in the script and output paths in functions produce_eval_scp(), data_aug/write_to_json() and data_aug/write_to_ark().
 
 Decode the model using:
 `./run.sh --stage 5 --decode_json /path/to/eval.json --tag tag.for.model`
